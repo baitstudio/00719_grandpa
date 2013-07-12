@@ -1,0 +1,7 @@
+launch_nuke$Launch Nuke$$False
+launch_3dsmax$Launch 3DSMax$$False
+show_in_filesystem$Show in File System$$True
+launch_photoshop$Launch Photoshop$$False
+launch_hiero$Launch Hiero$$False
+launch_maya$Launch Maya$$False
+launch_motionbuilder$Launch MotionBuilder$$False

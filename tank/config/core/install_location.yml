@@ -1,0 +1,10 @@
+# Shotgun Pipeline Toolkit configuration file
+# This file was automatically created by setup_project
+# This file reflects the paths in the primary pipeline
+# configuration defined for this project.
+
+Windows: 'K:\Tank\00719_grandpa\tank'
+Darwin: '/core/Tank/00719_grandpa\tank'
+Linux: 'None'
+
+# End of file.
