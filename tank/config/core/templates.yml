@@ -216,6 +216,11 @@ paths:
     asset_publish_area:
       definition: assets/{sg_asset_type}/{Asset}/publish
       root_name: work
+      
+    # define the location of a review area
+    asset_review_movie:
+      definition: assets/{sg_asset_type}/{Asset}/review/{name}.v{version}.mov
+      root_name: work
 
     #
     # Maya
