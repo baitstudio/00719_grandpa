@@ -1,0 +1,5 @@
+//Maya 2013 x64 Project Definition
+
+workspace -fr "scene" "";
+workspace -fr "images" "images";
+
