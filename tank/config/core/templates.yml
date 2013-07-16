@@ -67,6 +67,8 @@ keys:
         type: str
         shotgun_entity_type: Shot
         shotgun_field_name: sg_scene
+    grp_name:
+        type: str
 #
 # The paths section contains all the the key locations where files are to be stored
 # by Tank Apps. Each path is made up of several keys (like {version} or {shot}) and
@@ -98,7 +100,7 @@ paths:
 
     # The location of alembic cache
     cache_alembic:
-      definition: /{Episode}/{Shot}/cache/{Asset}.abc
+      definition: /{Episode}/{Shot}/cache/{name}[_{grp_name}].v{version}.abc
       root_name: renders
 
     #example_app

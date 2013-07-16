@@ -1,0 +1,10 @@
+# Shotgun Pipeline Toolkit configuration file
+# This file was automatically created by tank clone
+# This file reflects the paths in the pipeline configuration
+# entity which is associated with this location (Dev).
+
+Windows: 'K:\Tank\00719_grandpa\tank_dev'
+Darwin: '/core/Tank/00719_grandpa\tank_dev'
+Linux: ''
+
+# End of file.

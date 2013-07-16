@@ -1,59 +1,5 @@
 description: Apps and Engines related to Asset based work.
 engines:
-  tk-3dsmax:
-    apps:
-      tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.10}
-      tk-multi-loader-texture:
-        button_name: Load Selected Item
-        dependency_mode: false
-        hook_add_file_to_scene: default
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.12}
-        menu_name: Load Texture...
-        publish_filters: []
-        sg_entity_types:
-          Asset: []
-        single_select: true
-        tank_types: [Diffuse Texture, Specular Texture]
-        title_name: Add items to your Scene
-      tk-multi-publish:
-        display_name: Publish
-        hook_copy_file: default
-        hook_post_publish: default
-        hook_primary_pre_publish: default
-        hook_primary_publish: default
-        hook_scan_scene: default
-        hook_secondary_pre_publish: default
-        hook_secondary_publish: default
-        hook_thumbnail: default
-        location: {name: tk-multi-publish, type: app_store, version: v0.3.2}
-        primary_description: Publish and version up the current 3ds Max scene
-        primary_display_name: 3ds Max Publish
-        primary_icon: icons/publish_3dsmax_main.png
-        primary_publish_template: max_asset_publish
-        primary_scene_item_type: work_file
-        primary_tank_type: 3dsmax Scene
-        secondary_outputs: []
-        template_work: max_asset_work
-      tk-multi-screeningroom: '@launch_screeningroom'
-      tk-multi-snapshot:
-        hook_copy_file: default
-        hook_scene_operation: default
-        hook_thumbnail: default
-        location: {name: tk-multi-snapshot, type: app_store, version: v0.2.0}
-        template_snapshot: max_asset_snapshot
-        template_work: max_asset_work
-      tk-multi-workfiles:
-        hook_copy_file: default
-        hook_scene_operation: default
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.3}
-        sg_entity_types: [Shot, Asset]
-        template_publish: max_asset_publish
-        template_publish_area: asset_publish_area_max
-        template_work: max_asset_work
-        template_work_area: asset_work_area_max
-    debug_logging: false
-    location: {name: tk-3dsmax, type: app_store, version: v0.2.8}
   tk-maya:
     apps:
       tk-maya-breakdown:
@@ -62,17 +8,17 @@ engines:
         location: {name: tk-maya-breakdown, type: app_store, version: v0.2.11}
       tk-multi-about:
         location: {name: tk-multi-about, type: app_store, version: v0.1.10}
-      tk-multi-loader-rigging:
+      tk-multi-loader-general:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: default
         location: {name: tk-multi-loader, type: app_store, version: v0.2.12}
-        menu_name: Load Rig...
+        menu_name: Load Asset...
         publish_filters: []
         sg_entity_types:
           Asset: []
         single_select: true
-        tank_types: [Maya Rig]
+        tank_types: []
         title_name: Add items to your Scene
       tk-multi-loader-texture:
         button_name: Load Selected Item
@@ -154,6 +100,7 @@ engines:
         template_work: maya_asset_work
       tk-multi-workfiles:
         hook_copy_file: default
+        launch_at_startup: true
         hook_scene_operation: default
         location: {name: tk-multi-workfiles, type: app_store, version: v0.3.3}
         sg_entity_types: [Shot, Asset]
@@ -303,9 +250,7 @@ engines:
       tk-multi-about:
         location: {name: tk-multi-about, type: app_store, version: v0.1.10}
       tk-multi-screeningroom: '@launch_screeningroom'
-      tk-shotgun-launch3dsmax: '@launch_3dsmax'
       tk-shotgun-launchmaya: '@launch_maya'
-      tk-shotgun-launchmotionbuilder: '@launch_motionbuilder'
       tk-shotgun-launchnuke: '@launch_nuke'
       tk-shotgun-launchphotoshop: '@launch_photoshop'
     debug_logging: false
