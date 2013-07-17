@@ -25,5 +25,7 @@ class PickEnvironment(Hook):
             return "shot_step"
         elif context.entity["type"] == "Asset":
             return "asset_step"
+        elif context.entity["type"] == "Scene":
+            return "episode"
 
         return None

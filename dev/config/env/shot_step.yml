@@ -83,8 +83,8 @@ engines:
           display_group: Playblast
           display_name: Playblast
           icon: 'icons/playblast_publish.png'
-          name: playblast_publish
-          publish_template: maya_shot_review
+          name: playblast
+          publish_template: maya_shot_playblast
           required: false
           scene_item_type: shotcam
           selected: false

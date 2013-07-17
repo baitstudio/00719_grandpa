@@ -60,13 +60,15 @@ keys:
         shotgun_field_name: sg_filetag   
     SEQ:
         type: sequence
-        format_spec: "04"
+        format_spec: "05"
     eye:
         type: str
     Episode:
         type: str
         shotgun_entity_type: Shot
         shotgun_field_name: sg_scene
+    Scene:
+        type: str
     grp_name:
         type: str
 #
@@ -89,13 +91,18 @@ paths:
     #
 
     # The location of low resolution plates
-    low_resolution_plate:
-      definition: footage/episodes/{Episode}/{Shot}/plate/low/{name}.[v{version}.]{SEQ}.jpeg
+    proxy_full_res_plate:
+      definition: footage/episodes/{Episode}/{Shot}/proxy_plates/{Shot}_FULL_RES/{Shot}.[v{version}.]{SEQ}.jpg
       root_name: resources
-
+      
+    # The location of low resolution plates
+    proxy_low_res_plate:
+      definition: footage/episodes/{Episode}/{Shot}/proxy_plates/{Shot}_HALF_RES/{Shot}.[v{version}.]{SEQ}.jpg
+      root_name: resources
+      
     # The location of high resolution plates
     high_resolution_plate:
-      definition: footage/episodes/{Episode}/{Shot}/plate/high/{name}.[v{version}.]{SEQ}.jpeg
+      definition: footage/episodes/{Episode}/{Shot}/plates/{Shot}.[v{version}.]{SEQ}.exr
       root_name: resources
 
     # The location of alembic cache
@@ -118,6 +125,31 @@ paths:
       definition: 'episodes/{Episode}/{Shot}/{Step}/publish'
       root_name: work
 
+    # Hiero
+    #
+    #Hiero project file
+    hiero_workfile:
+      definition: episodes/{Scene}/ingest/{name}.v{version}.hrox
+      root_name: work
+
+    #Hiero project file
+    hiero_work_area:
+      definition: episodes/{Scene}/ingest/
+      root_name: work
+
+    # The location of Hiero published nuke scripts
+    hiero_nuke_script:
+      definition: episodes/{Scene}/{Shot}/Comp/work/{name}.[{filetag}.]v{version}.nk
+      root_name: work
+
+    hiero_publish_project:
+      definition: episodes/{Scene}/ingest/publish/{name}.v{version}.hrox
+      root_name: work
+      
+    hiero_publish_area:
+      definition: episodes/{Scene}/ingest/publish/
+      root_name: work
+    
     # Maya
     #
     #temp file for Light setup

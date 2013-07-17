@@ -1,0 +1,5 @@
+launch_nuke$Launch Nuke$$False
+show_in_filesystem$Show in File System$$True
+launch_hiero$Launch Hiero$$False
+launch_photoshop$Launch Photoshop$$False
+launch_maya$Launch Maya$$False

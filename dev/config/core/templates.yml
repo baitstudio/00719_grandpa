@@ -151,7 +151,7 @@ paths:
       root_name: renders
 
     # The location of maya reviews
-    maya_shot_review:
+    maya_shot_playblast:
       definition: /{Episode}/{Shot}/cg/review/{name}.[{filetag}.]v{version}.mov
       root_name: renders
 

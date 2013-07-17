@@ -36,7 +36,7 @@ engines:
         display_name: Publish Scene
         hook_copy_file: default
         hook_post_publish: default
-        hook_primary_pre_publish: default
+        hook_primary_pre_publish: asset_primary_pre_publish
         hook_primary_publish: default
         hook_scan_scene: default
         hook_secondary_pre_publish: default
@@ -50,35 +50,6 @@ engines:
         primary_scene_item_type: work_file
         primary_tank_type: Maya Scene
         secondary_outputs: []
-        template_work: maya_asset_work
-      tk-multi-publish-texture:
-        display_name: Publish Asset with Textures
-        hook_copy_file: default
-        hook_post_publish: default
-        hook_primary_pre_publish: default
-        hook_primary_publish: default
-        hook_scan_scene: scan_for_textures_maya_publish
-        hook_secondary_pre_publish: textures_maya_secondary_pre_publish
-        hook_secondary_publish: textures_maya_secondary_publish
-        hook_thumbnail: default
-        location: {name: tk-multi-publish, type: app_store, version: v0.3.2}
-        primary_description: Publish and version up the current Maya scene
-        primary_display_name: Maya Publish
-        primary_icon: icons/publish_maya_main.png
-        primary_publish_template: maya_asset_publish
-        primary_scene_item_type: work_file
-        primary_tank_type: Maya Scene
-        secondary_outputs:
-        - description: 'Publish texture files with the file'
-          display_group: Textures
-          display_name: Texture Files
-          icon: 'icons/texture_publish.png'
-          name: texture_file
-          publish_template: maya_asset_publish
-          required: false
-          scene_item_type: texture_file
-          selected: false
-          tank_type: 'Texture'
         template_work: maya_asset_work
       tk-multi-recentfiles:
         hook_add_file_to_scene: default
