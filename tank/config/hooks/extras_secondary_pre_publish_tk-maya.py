@@ -87,9 +87,11 @@ class PrePublishHook(Hook):
             # pre-publish alembic_cache output
             if output["name"] == "alembic_cache":
                 errors.extend(self._validate_item_for_alembic_cache_publish(item))
+            elif output['name'] == "playblast":
+                print ("playblast camera" + str(item))
             else:
                 # don't know how to publish this output types!
-                errors.append("Don't know how to publish this item! at all")       
+                errors.append("Don't know how to publish this item!")       
 
             # if there is anything to report then add to result
             if len(errors) > 0:

@@ -1,3 +1,4 @@
 - {darwin: /core/Tank/00719_grandpa\tank, linux2: null, win32: 'K:\Tank\00719_grandpa\tank'}
-- {darwin: /core/Tank/00719_grandpa\tank_dev, linux2: '', win32: 'K:\Tank\00719_grandpa\tank_dev'}
 - {darwin: /core/Tank/00719_grandpa\dev, linux2: '', win32: 'K:\Tank\00719_grandpa\dev'}
+- {darwin: /core/Tank/00719_grandpa\tank_clone, linux2: '', win32: 'K:\Tank\00719_grandpa\tank_clone'}
+- {darwin: /core/Tank/00719_grandpa/primary, linux2: '', win32: 'K:\Tank\00719_grandpa\primary'}

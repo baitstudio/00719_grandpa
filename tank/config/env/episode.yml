@@ -6,9 +6,9 @@ engines:
         default_task_template: Basic shot template
         hook_translate_template: default
         location: {name: tk-hiero-export, type: app_store, version: v0.1.1}
-        template_nuke_script_path: nuke_shot_work
-        template_plate_path: high_resolution_plate
-        template_render_path: hiero_nuke_script
+        template_nuke_script_path: hiero_nuke_script_path
+        template_plate_path: high_res_plate_path
+        template_render_path: hiero_render_path
       tk-hiero-openinshotgun:
         location: {name: tk-hiero-openinshotgun, type: app_store, version: v0.1.0}
       tk-multi-about:
@@ -26,43 +26,58 @@ engines:
         location: {name: tk-multi-publish, type: app_store, version: v0.3.4}
         primary_description: Publish and version up the current work file
         primary_display_name: Current Work File
-        primary_icon: ''
-        primary_publish_template: hiero_publish_project
+        primary_icon: icons/publish_hiero_main.png
+        primary_publish_template: hiero_project_publish
         primary_scene_item_type: work_file
-        primary_tank_type: ''
+        primary_tank_type: Hiero Project
         secondary_outputs: []
-        template_work: hiero_workfile
+        template_work: hiero_project_work
       tk-multi-recentfiles:
         hook_add_file_to_scene: default
         launch_at_startup: false
         location: {name: tk-multi-recentfiles, type: app_store, version: v0.2.9}
-        template_work: hiero_workfile
+        template_work: hiero_project_work
       tk-multi-setcontext:
         enable_create_tasks: true
         launch_at_startup: false
         location: {name: tk-multi-setcontext, type: app_store, version: v0.2.7}
         sg_entity_types: [Scene]
+      tk-multi-snapshot:
+        hook_copy_file: default
+        hook_scene_operation: default
+        hook_thumbnail: default
+        location: {name: tk-multi-snapshot, type: app_store, version: v0.2.0}
+        template_snapshot: hiero_project_snapshot
+        template_work: hiero_project_work
       tk-multi-workfiles:
         hook_copy_file: default
         hook_scene_operation: default
         location: {name: tk-multi-workfiles, type: app_store, version: v0.3.6}
-        sg_entity_types: [Scene]
-        template_publish: hiero_publish_project
-        template_publish_area: hiero_publish_area
-        template_work: hiero_workfile
-        template_work_area: hiero_work_area
+        sg_entity_types: []
+        template_publish: hiero_project_publish
+        template_publish_area: hiero_project_publish_area
+        template_work: hiero_project_work
+        template_work_area: hiero_project_work_area
+    bin_context_menu:
+    - {app_instance: tk-multi-workfiles, keep_in_menu: true, name: Shotgun Save As...,
+      requires_selection: true}
+    - {app_instance: tk-multi-workfiles, keep_in_menu: true, name: Version up Current
+        Scene..., requires_selection: true}
+    - {app_instance: tk-multi-snapshot, keep_in_menu: false, name: Snapshot..., requires_selection: true}
+    - {app_instance: tk-multi-snapshot, keep_in_menu: false, name: Snapshot History...,
+      requires_selection: true}
+    - {app_instance: tk-multi-publish, keep_in_menu: true, name: Publish Project...,
+      requires_selection: true}
     debug_logging: false
     location: {name: tk-hiero, type: app_store, version: v0.2.1}
-    timeline_context_menu:
-    - {app_instance: tk-hiero-openinshotgun, keep_in_menu: false, name: Open in Shotgun, requires_selection: true}
-    spreadsheet_context_menu:
-    - {app_instance: tk-hiero-openinshotgun, keep_in_menu: false, name: Open in Shotgun, requires_selection: true}
-    bin_context_menu: 
-    - {app_instance: tk-multi-workfiles, keep_in_menu: true, name: "Shotgun Save As...", requires_selection: true}
-    - {app_instance: tk-multi-workfiles, keep_in_menu: true, name: "Version up Current Scene...", requires_selection: true}
-    - {app_instance: tk-multi-publish, keep_in_menu: true, name: "Publish Project...", requires_selection: true}
-    menu_favourites: 
+    menu_favourites:
     - {app_instance: tk-multi-workfiles, name: Shotgun File Manager...}
+    spreadsheet_context_menu:
+    - {app_instance: tk-hiero-openinshotgun, keep_in_menu: false, name: Open in Shotgun,
+      requires_selection: true}
+    timeline_context_menu:
+    - {app_instance: tk-hiero-openinshotgun, keep_in_menu: false, name: Open in Shotgun,
+      requires_selection: true}
   tk-shell:
     apps:
       tk-multi-about:
@@ -72,7 +87,7 @@ engines:
       tk-shotgun-launchnuke: '@launch_nuke'
       tk-shotgun-launchphotoshop: '@launch_photoshop'
     debug_logging: false
-    location: {name: tk-shell, type: app_store, version: v0.3.1}
+    location: {name: tk-shell, type: app_store, version: v0.3.2}
 frameworks:
   tk-framework-widget_v0.1.1:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.1}

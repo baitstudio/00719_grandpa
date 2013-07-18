@@ -100,9 +100,15 @@ class PublishHook(Hook):
                                                         sg_task, comment, thumbnail_path, progress_cb)
                 except Exception, e:
                    errors.append("Publish failed - %s" % e)
+            elif output["name"] == "playblast":
+                try:
+                   self._publish_playblast_for_item(item, output, work_template, primary_publish_path, 
+                                                        sg_task, comment, thumbnail_path, progress_cb)
+                except Exception, e:
+                   errors.append("Publish failed - %s" % e)
             else:
                 # don't know how to publish this output types!
-                errors.append("Don't know how to publish this item! at all") 
+                errors.append("Don't know how to publish this item!") 
 
             # if there is anything to report then add to result
             if len(errors) > 0:
@@ -191,27 +197,23 @@ class PublishHook(Hook):
         # create the publish path by applying the fields 
         # with the publish template:
         playblast_path = publish_template.apply_fields(fields)
-
+        
         
         # build and execute the Alembic export command for this item:
         height = 360
         width = 640
         #abc_export_cmd = "AbcExport -j \"-frameRange 1 100 -stripNamespaces -uvWrite -worldSpace -wholeFrameGeo -writeVisibility %s -file %s\"" % (nodesString,publish_path)    
         try:
-            result=cmds.playblast(f=playblast_path,format='qt',forceOverwrite=True,offScreen=True,percent=100,compression='H.264',quality=100,width=width,height=height,viewer=False)
+            mov = cmds.playblast(f=playblast_path,format='qt',forceOverwrite=True,offScreen=True,percent=100,compression='H.264',quality=100,width=width,height=height,viewer=False)
         except Exception, e:
             raise TankError("Failed to export Playblast: %s" % e)
-
+        
         # Finally, register this publish with Shotgun
-        self._register_publish(publish_path, 
-                               group_name, 
-                               sg_task, 
-                               publish_version, 
-                               tank_type,
-                               comment,
-                               thumbnail_path, 
-                               [primary_publish_path])
-
+        self._register_version(fields, 
+                               playblast_path,
+                               mov)
+        
+        
     def _register_publish(self, path, name, sg_task, publish_version, tank_type, comment, thumbnail_path, dependency_paths=None):
         """
         Helper method to register publish using the 
@@ -236,7 +238,39 @@ class PublishHook(Hook):
 
         return sg_data
 
+    def _register_version(self,fields,playblast_path,mov):
+        """
+        Helper method to register publish using the 
+        specified publish info.
+        """
 
+        sg_version_name='v'+str(fields['version']).zfill(3)
+        
+        startTime=cmds.playbackOptions(q=True,minTime=True)
+        endTime=cmds.playbackOptions(q=True,maxTime=True)
+        
+        args = {
+            "code": sg_version_name,
+            "project": self.parent.context.project,
+            "entity": self.parent.context.entity,
+            "sg_task": self.parent.context.task,
+            "created_by": self.parent.context.user,
+            "user": self.parent.context.user,
+            "sg_path_to_movie": playblast_path,
+            "sg_first_frame": int(startTime),
+            "sg_last_frame": int(endTime),
+            "frame_count": int((endTime - startTime) + 1),
+            "frame_range": "%d-%d" % (startTime,endTime),
+        }
+
+        # register publish;
+        sg_data = self.parent.shotgun.create("Version", args)
+        
+        #self.parent.shotgun.upload_thumbnail("Version", sg_data["id"], thumbnail)
+        
+        self.parent.shotgun.upload("Version",sg_data['id'],mov,field_name='sg_uploaded_movie')
+
+        return sg_data
         
 
 

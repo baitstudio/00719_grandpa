@@ -71,6 +71,21 @@ keys:
         type: str
     grp_name:
         type: str
+        
+    # these are used by the hiero exporter and pipeline
+    YYYY:
+        type: int
+        format_spec: "04"
+    MM:
+        type: int
+        format_spec: "02"
+    DD:
+        type: int
+        format_spec: "02"
+        alias: DD
+    project:
+        type: str        
+
 #
 # The paths section contains all the the key locations where files are to be stored
 # by Tank Apps. Each path is made up of several keys (like {version} or {shot}) and
@@ -83,27 +98,41 @@ keys:
 paths:
 
     ##########################################################################################
+    # Episode level paths 
+    #
+
+    #
+    # Hiero
+    #
+
+    # The location of WIP files
+    hiero_project_work:
+      definition: episodes/{Scene}/ingest/{name}.v{version}.hrox
+      root_name: work
+      
+    hiero_project_work_area:
+      definition: episodes/{Scene}/ingest
+      root_name: work
+      
+    # The location of backups of WIP files
+    hiero_project_snapshot: 'episodes/{Scene}/ingest/snapshots/{name}.v{version}.{timestamp}.hrox'
+
+    # The location of published hiero files
+    hiero_project_publish:
+      definition: episodes/{Scene}/ingest/publish/{name}.v{version}.hrox
+      root_name: work
+    hiero_project_publish_area:
+      definition: episodes/{Scene}/ingest/publish/
+      root_name: work
+
+
+    ##########################################################################################
     # Shot pipeline 
     #
 
     #
     # General
     #
-
-    # The location of low resolution plates
-    proxy_full_res_plate:
-      definition: footage/episodes/{Episode}/{Shot}/proxy_plates/{Shot}_FULL_RES/{Shot}.[v{version}.]{SEQ}.jpg
-      root_name: resources
-      
-    # The location of low resolution plates
-    proxy_low_res_plate:
-      definition: footage/episodes/{Episode}/{Shot}/proxy_plates/{Shot}_HALF_RES/{Shot}.[v{version}.]{SEQ}.jpg
-      root_name: resources
-      
-    # The location of high resolution plates
-    high_resolution_plate:
-      definition: footage/episodes/{Episode}/{Shot}/plates/{Shot}.[v{version}.]{SEQ}.exr
-      root_name: resources
 
     # The location of alembic cache
     cache_alembic:
@@ -124,38 +153,10 @@ paths:
     shot_publish_area:
       definition: 'episodes/{Episode}/{Shot}/{Step}/publish'
       root_name: work
-
-    # Hiero
+ 
     #
-    #Hiero project file
-    hiero_workfile:
-      definition: episodes/{Scene}/ingest/{name}.v{version}.hrox
-      root_name: work
-
-    #Hiero project file
-    hiero_work_area:
-      definition: episodes/{Scene}/ingest/
-      root_name: work
-
-    # The location of Hiero published nuke scripts
-    hiero_nuke_script:
-      definition: episodes/{Scene}/{Shot}/Comp/work/{name}.[{filetag}.]v{version}.nk
-      root_name: work
-
-    hiero_publish_project:
-      definition: episodes/{Scene}/ingest/publish/{name}.v{version}.hrox
-      root_name: work
-      
-    hiero_publish_area:
-      definition: episodes/{Scene}/ingest/publish/
-      root_name: work
-    
     # Maya
     #
-    #temp file for Light setup
-    light_setup_temp:
-      definition: episodes/{Episode}/{Shot}/{Step}/work/temp.ma
-      root_name: work
 
     # The location of ncache
     maya_nCache:
@@ -191,16 +192,6 @@ paths:
     # Nuke 
     #
 
-    # define the location of a work area
-    #shot_work_area_nuke:
-    #  definition: 'episodes/{Episode}/{Shot}/{Step}/work'
-    #  root_name: work
-
-    # define the location of a publish area
-    #shot_publish_area_nuke:
-    #  definition: 'episodes/{Episode}/{Shot}/{Step}/publish'
-    #  root_name: work
-
     # The location of WIP script files
     nuke_shot_work:
       definition: episodes/{Episode}/{Shot}/{Step}/work/{name}.[{filetag}.]v{version}.nk
@@ -230,11 +221,42 @@ paths:
       definition: /{Episode}/{Shot}/comp/elements/{name}/{Shot}_{name}_{channel}_v{version}.{SEQ}.exr
       root_name: renders
 
-
     # review output
     shot_quicktime_quick:
       definition: /{Episode}/{Shot}/review/v{version}/{Shot}_{name}_quick_{iteration}.mov
       root_name: renders
+
+    #
+    # Hiero
+    #
+
+    # export of shot asset data from hiero
+
+ 
+    # The location of high resolution plates
+    high_res_plate_path:
+      definition: 'footage/episodes/{Episode}/{Shot}/plates/{Shot}.[v{version}.]{SEQ}.exr'
+      root_name: resources
+      
+    # The location of full resolution plates  
+    full_res_proxy_plate_path:
+      definition: 'footage/episodes/{Episode}/{Shot}/proxy_plates/{Shot}_FULL_RES/{Shot}.[v{version}.]{SEQ}.jpg'
+      root_name: resources
+      
+    # The location of low resolution plates  
+    low_res_proxy_plate_path:
+      definition: 'footage/episodes/{Episode}/{Shot}/proxy_plates/{Shot}_HALF_RES/{Shot}.[v{version}.]{SEQ}.jpg'
+      root_name: resources
+    
+    # The location of nuke scripts  
+    hiero_nuke_script_path: 
+      definition: 'episodes/{Scene}/{Shot}/Comp/work/{name}.comp.v{version}.nk'
+      root_name: resources
+      
+    # The location final delivery renders 
+    hiero_render_path:
+      definition: 'episodes/{Scene}/v{version}/{project}_{Shot}.v{version}.mov'
+      root_name: delivery
 
     ##########################################################################################
     # Asset pipeline 
