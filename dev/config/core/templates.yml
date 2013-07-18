@@ -284,11 +284,6 @@ paths:
     # Maya
     #
 
-    # define the location of a work area
-    asset_work_area_maya:
-      definition: assets/{sg_asset_type}/{Asset}/work/{Step}/
-      root_name: work
-
     # The location of WIP files
     maya_asset_work:
       definition: assets/{sg_asset_type}/{Asset}/work/{Step}/{name}.[{filetag}.]v{version}.ma

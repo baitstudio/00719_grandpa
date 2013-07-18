@@ -1,0 +1,5 @@
+delivery: {linux_path: null, mac_path: null, windows_path: 'O:\'}
+primary: {linux_path: null, mac_path: null, windows_path: 'K:\Tank'}
+renders: {linux_path: null, mac_path: null, windows_path: 'N:\'}
+resources: {linux_path: null, mac_path: null, windows_path: 'L:\'}
+work: {linux_path: null, mac_path: null, windows_path: 'M:\'}
