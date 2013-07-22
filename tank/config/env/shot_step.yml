@@ -52,14 +52,14 @@ engines:
         secondary_outputs: []
         template_work: maya_shot_work
       tk-multi-publish-extras:
-        display_name: Publish with Extras
+        display_name: Publish Shot
         hook_copy_file: default
         hook_post_publish: default
-        hook_primary_pre_publish: default
+        hook_primary_pre_publish: shot_asset_primary_pre_publish
         hook_primary_publish: default
-        hook_scan_scene: shot_scan_scene_tk-maya
-        hook_secondary_pre_publish: shot_secondary_pre_publish_tk-maya
-        hook_secondary_publish: shot_secondary_publish_tk-maya
+        hook_scan_scene: extras_scan_scene_tk-maya
+        hook_secondary_pre_publish: extras_secondary_pre_publish_tk-maya
+        hook_secondary_publish: extras_secondary_publish_tk-maya
         hook_thumbnail: default
         location: {name: tk-multi-publish, type: app_store, version: v0.3.4}
         primary_description: Publish and version up the current Maya scene
@@ -69,7 +69,7 @@ engines:
         primary_scene_item_type: work_file
         primary_tank_type: Maya Scene
         secondary_outputs:
-        - description: Publish Alembic Cache data for the assets 
+        - description: Publish Alembic Cache data for the assets
           display_group: Caches
           display_name: Alembic Cache
           icon: icons/alembic_output.png
@@ -80,13 +80,13 @@ engines:
           selected: false
           tank_type: Alembic Cache
         - description: Choose cameras for Playblast
-          display_group: Review
-          display_name: Review
+          display_group: Playblast
+          display_name: Playblast
           icon: icons/playblast_publish.png
           name: playblast
-          publish_template: maya_shot_review
+          publish_template: maya_shot_review,
           required: false
-          scene_item_type: shotcam 
+          scene_item_type: shotcam
           selected: false
           tank_type: Review Quicktime
         template_work: maya_shot_work

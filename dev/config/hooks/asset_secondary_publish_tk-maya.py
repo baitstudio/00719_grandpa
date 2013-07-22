@@ -244,6 +244,19 @@ class PublishHook(Hook):
         specified publish info.
         """
 
+
+        #query context
+        tk=self.parent.tank
+        ctx=self.parent.context
+        maya_work=tk.templates['shot_work_area_maya']
+        
+        fields=ctx.as_template_fields(maya_work)
+        
+        #animation setup
+        if fields['Step']=='Anim':
+            self.maya_anim_setup()
+                        
+
         sg_version_name='v'+str(fields['version']).zfill(3)
         
         startTime=cmds.playbackOptions(q=True,minTime=True)

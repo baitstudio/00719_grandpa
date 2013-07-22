@@ -100,7 +100,7 @@ class PublishHook(Hook):
                                                         sg_task, comment, thumbnail_path, progress_cb)
                 except Exception, e:
                    errors.append("Publish failed - %s" % e)
-            elif output["name"] == "playblast":
+            elif output["name"] == "review":
                 try:
                    self._publish_playblast_for_item(item, output, work_template, primary_publish_path, 
                                                         sg_task, comment, thumbnail_path, progress_cb)
@@ -156,11 +156,12 @@ class PublishHook(Hook):
         # build and execute the Alembic export command for this item:
         frame_start = int(cmds.playbackOptions(q=True, min=True))
         frame_end = int(cmds.playbackOptions(q=True, max=True))
-        #abc_export_cmd = "AbcExport -j \"-frameRange 1 100 -stripNamespaces -uvWrite -worldSpace -wholeFrameGeo -writeVisibility %s -file %s\"" % (nodesString,publish_path)
+        #abc_export_cmd = "AbcExport -j \"-frameRange %s %s %s -stripNamespaces -uvWrite -worldSpace -wholeFrameGeo -writeVisibility %s-file %s\"" % (frame_start,frame_end,attrstring,nodesString,publish_path)
        
         try:
             #self.parent.log_debug("Executing command: %s" % abc_export_cmd)
             #mel.eval(abc_export_cmd)
+            print 'exporting ABC'
             pm.AbcExport(j='-frameRange %s %s %s -stripNamespaces -uvWrite -worldSpace -wholeFrameGeo -writeVisibility %s-file %s' % (frame_start,frame_end,attrstring,nodesString,publish_path))
         except Exception, e:
             raise TankError("Failed to export Alembic Cache: %s" % e)
