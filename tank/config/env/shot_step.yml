@@ -6,8 +6,10 @@ engines:
         hook_multi_update: default
         hook_scan_scene: default
         location: {name: tk-maya-breakdown, type: app_store, version: v0.2.11}
+        
       tk-multi-about:
         location: {name: tk-multi-about, type: app_store, version: v0.1.10}
+        
       tk-multi-loader-1:
         button_name: Load Selected Item
         dependency_mode: false
@@ -20,6 +22,7 @@ engines:
         single_select: true
         tank_types: [Maya Model, Maya Rig]
         title_name: Add items to your Scene
+        
       tk-multi-loader-2:
         button_name: Load Selected Item
         dependency_mode: false
@@ -32,6 +35,7 @@ engines:
         single_select: true
         tank_types: [Maya Anim, Maya Lighting, Maya Scene]
         title_name: Add items to your Scene
+        
       tk-multi-publish:
         display_name: Publish
         hook_copy_file: default
@@ -51,15 +55,16 @@ engines:
         primary_tank_type: Maya Scene
         secondary_outputs: []
         template_work: maya_shot_work
-      tk-multi-publish-extras:
+        
+      tk-multi-publish-shot:
         display_name: Publish Shot
         hook_copy_file: default
         hook_post_publish: default
-        hook_primary_pre_publish: shot_asset_primary_pre_publish
+        hook_primary_pre_publish: shot_asset_primary_pre_publish_tk-maya
         hook_primary_publish: default
-        hook_scan_scene: extras_scan_scene_tk-maya
-        hook_secondary_pre_publish: extras_secondary_pre_publish_tk-maya
-        hook_secondary_publish: extras_secondary_publish_tk-maya
+        hook_scan_scene: shot_scan_scene_tk-maya
+        hook_secondary_pre_publish: shot_secondary_pre_publish_tk-maya
+        hook_secondary_publish: shot_secondary_publish_tk-maya
         hook_thumbnail: default
         location: {name: tk-multi-publish, type: app_store, version: v0.3.4}
         primary_description: Publish and version up the current Maya scene
@@ -80,31 +85,51 @@ engines:
           selected: false
           tank_type: Alembic Cache
         - description: Choose cameras for Playblast
-          display_group: Playblast
+          display_group: Review
           display_name: Playblast
           icon: icons/playblast_publish.png
-          name: playblast
-          publish_template: maya_shot_review,
+          name: review
+          publish_template: maya_shot_review
           required: false
           scene_item_type: shotcam
           selected: false
           tank_type: Review Quicktime
         template_work: maya_shot_work
+        
       tk-multi-recentfiles:
         hook_add_file_to_scene: default
-        launch_at_startup: true
+        launch_at_startup: false
         location: {name: tk-multi-recentfiles, type: app_store, version: v0.2.9}
         template_work: maya_shot_work
+        
+      tk-multi-recentfiles2:
+        display_name: Recent Files xtra
+        hook_add_file_to_scene: default
+        hook_setup_new_scene: default
+        launch_at_startup: true
+        location: {name: tk-multi-recentfiles, path: 'K:/Tank/00719_grandpa/dev/install/apps/tk-multi-recentfiles',
+          type: dev}
+        template_work: maya_shot_work
+        
+      bait-app:
+        display_name: BAIT app
+        location: {name: bait_app, path: 'K:/Tank/00719_grandpa/dev/install/apps/bait_app',
+          type: dev}
+        hook_setup_new_scene: default
+        
       tk-multi-screeningroom: '@launch_screeningroom'
+      
       tk-multi-setcontext:
         enable_create_tasks: true
         launch_at_startup: false
         location: {name: tk-multi-setcontext, type: app_store, version: v0.2.7}
         sg_entity_types: [Shot, Asset]
+        
       tk-multi-setframerange:
         location: {name: tk-multi-setframerange, type: app_store, version: v0.1.5}
         sg_in_frame_field: sg_cut_in
         sg_out_frame_field: sg_cut_out
+        
       tk-multi-snapshot:
         hook_copy_file: default
         hook_scene_operation: default
@@ -112,6 +137,7 @@ engines:
         location: {name: tk-multi-snapshot, type: app_store, version: v0.2.0}
         template_snapshot: maya_shot_snapshot
         template_work: maya_shot_work
+        
       tk-multi-workfiles:
         hook_copy_file: default
         hook_scene_operation: default
@@ -121,13 +147,14 @@ engines:
         template_publish_area: shot_publish_area
         template_work: maya_shot_work
         template_work_area: shot_work_area
+        
     debug_logging: false
     location: {name: tk-maya, type: app_store, version: v0.3.5}
     menu_favourites:
     - {app_instance: tk-multi-workfiles, name: Shotgun File Manager...}
     - {app_instance: tk-multi-snapshot, name: Snapshot...}
     - {app_instance: tk-multi-workfiles, name: Shotgun Save As...}
-    - {app_instance: tk-multi-publish, name: Publish...}
+    - {app_instance: tk-multi-publish-shot, name: Publish Shot...}
     template_project: shot_work_area
     use_sgtk_as_menu_name: false
   tk-nuke:

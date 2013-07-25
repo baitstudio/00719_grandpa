@@ -33,7 +33,7 @@ class SetupNewScene(tank.Hook):
                             
             #simulation setup
             elif fields['Step']=='Sim':
-                self.maya_sim_setup()
+                self.maya_sim_setup('test', 'test2')
                 
              #lighting setup
             elif fields['Step']=='Light':
@@ -111,7 +111,7 @@ class SetupNewScene(tank.Hook):
             i += 1
 
         
-    def maya_anim_setup(self):
+    def maya_anim_setup(self,variable, var):
         
         pm.confirmDialog( title='Confirm', message='Are you sure you want to create a new scene?', button=['Yes','No'], defaultButton='Yes', cancelButton='No', dismissString='No' )
         

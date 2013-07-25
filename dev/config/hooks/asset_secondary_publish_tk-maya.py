@@ -100,7 +100,7 @@ class PublishHook(Hook):
                                                         sg_task, comment, thumbnail_path, progress_cb)
                 except Exception, e:
                    errors.append("Publish failed - %s" % e)
-            elif output["name"] == "playblast":
+            elif output["name"] == "review":
                 try:
                    self._publish_playblast_for_item(item, output, work_template, primary_publish_path, 
                                                         sg_task, comment, thumbnail_path, progress_cb)
@@ -124,7 +124,7 @@ class PublishHook(Hook):
         Export an Alembic cache for the specified item and publish it
         to Shotgun.
         """
-        group_name = item["name"].strip("|")
+        asset_name = item["name"].strip("|")
         tank_type = output["tank_type"]
         publish_template = output["publish_template"]        
 
@@ -135,7 +135,7 @@ class PublishHook(Hook):
         publish_version = fields["version"]
 
         # update fields with the group name:
-        fields["grp_name"] = group_name
+        fields["Asset"] = asset_name
         
         name = os.path.basename(cmds.file(query=True, sn=True))
         fields["name"] = name.split('.')[0] 
@@ -189,10 +189,7 @@ class PublishHook(Hook):
         # using the work template:
         scene_path = os.path.abspath(cmds.file(query=True, sn=True))
         fields = work_template.get_fields(scene_path)
-        publish_version = fields["version"]
-     
-        name = os.path.basename(cmds.file(query=True, sn=True))
-        fields["name"] = name.split('.')[0] 
+        #publish_version = fields["version"]
         
         # create the publish path by applying the fields 
         # with the publish template:
@@ -248,32 +245,30 @@ class PublishHook(Hook):
         #query context
         tk=self.parent.tank
         ctx=self.parent.context
-        maya_work=tk.templates['shot_work_area_maya']
+        #maya_work=tk.templates['asset_work_area']
         
-        fields=ctx.as_template_fields(maya_work)
+        #fields=ctx.as_template_fields(maya_work)
         
-        #animation setup
-        if fields['Step']=='Anim':
-            self.maya_anim_setup()
-                        
-
-        sg_version_name='v'+str(fields['version']).zfill(3)
+                    
+        #sg_version_name='v'+str(fields['version']).zfill(3)
         
         startTime=cmds.playbackOptions(q=True,minTime=True)
         endTime=cmds.playbackOptions(q=True,maxTime=True)
         
         args = {
-            "code": sg_version_name,
-            "project": self.parent.context.project,
-            "entity": self.parent.context.entity,
-            "sg_task": self.parent.context.task,
-            "created_by": self.parent.context.user,
-            "user": self.parent.context.user,
+            "code": fields['Asset'],
+            "project": ctx.project,
+            "entity": ctx.entity,
+            "sg_task": ctx.task,
+            "created_by": ctx.user,
+            "user": ctx.user,
             "sg_path_to_movie": playblast_path,
             "sg_first_frame": int(startTime),
             "sg_last_frame": int(endTime),
             "frame_count": int((endTime - startTime) + 1),
             "frame_range": "%d-%d" % (startTime,endTime),
+            "description": fields['Asset'],
+            "sg_library": True
         }
 
         # register publish;
@@ -282,6 +277,10 @@ class PublishHook(Hook):
         #self.parent.shotgun.upload_thumbnail("Version", sg_data["id"], thumbnail)
         
         self.parent.shotgun.upload("Version",sg_data['id'],mov,field_name='sg_uploaded_movie')
+        
+        data = {'sg_uploaded_movie': {'local_path': mov}}
+                
+        self.parent.shotgun.update('Version',sg_data['id'],data)
 
         return sg_data
         

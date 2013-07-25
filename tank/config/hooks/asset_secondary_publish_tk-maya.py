@@ -100,7 +100,7 @@ class PublishHook(Hook):
                                                         sg_task, comment, thumbnail_path, progress_cb)
                 except Exception, e:
                    errors.append("Publish failed - %s" % e)
-            elif output["name"] == "playblast":
+            elif output["name"] == "review":
                 try:
                    self._publish_playblast_for_item(item, output, work_template, primary_publish_path, 
                                                         sg_task, comment, thumbnail_path, progress_cb)
@@ -243,6 +243,19 @@ class PublishHook(Hook):
         Helper method to register publish using the 
         specified publish info.
         """
+
+
+        #query context
+        tk=self.parent.tank
+        ctx=self.parent.context
+        maya_work=tk.templates['shot_work_area_maya']
+        
+        fields=ctx.as_template_fields(maya_work)
+        
+        #animation setup
+        if fields['Step']=='Anim':
+            self.maya_anim_setup()
+                        
 
         sg_version_name='v'+str(fields['version']).zfill(3)
         

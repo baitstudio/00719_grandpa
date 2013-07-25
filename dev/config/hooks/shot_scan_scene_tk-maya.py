@@ -50,7 +50,9 @@ class ScanSceneHook(Hook):
                                             pre-publish and publish hooks
                         }
         """   
-                
+        
+        ctx=self.parent.context
+          
         items = []
         
         # get the main scene:
@@ -79,11 +81,14 @@ class ScanSceneHook(Hook):
                 assets[assetName].append(node)
                 
         for asset in assets:
-            items.append({"type":"mesh_group", "name":asset, "other_params": assets[asset] })
+            items.append({"type":"asset", "name":asset, "other_params": assets[asset] })
         
         #create Preview items   
         for node in pm.ls(type='camera'):     
-            items.append(({"type": "shotcam", "name": node}))
-            
+            items.append({"type": "shotcam", "name": node})
+        
+        #adding Deadline item
+        if ctx.step['name']=='Light':
+            items.append({"type": "render", "name": 'deadline_render'})
         
         return items

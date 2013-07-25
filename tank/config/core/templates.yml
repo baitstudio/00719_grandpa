@@ -136,11 +136,11 @@ paths:
 
     # The location of alembic cache
     cache_alembic:
-      definition: /{Episode}/{Shot}/cache/{name}[_{grp_name}].v{version}.abc
+      definition: /{Episode}/{Shot}/cache/{name}[_{grp_name}][.v{version}].abc
       root_name: renders
       
     cache_alembic_asset:
-      definition: assets/{sg_asset_type}/{Asset}/publish/{name}[_{grp_name}].v{version}.abc
+      definition: assets/{sg_asset_type}/{Asset}/publish/{name}[_{grp_name}][.v{version}].abc
       root_name: work
 
     #example_app
@@ -277,7 +277,7 @@ paths:
       
     # define the location of a review area
     asset_review_movie:
-      definition: assets/{sg_asset_type}/{Asset}/review/{name}.v{version}.mov
+      definition: assets/{sg_asset_type}/{Asset}/review/{name}[.v{version}].mov
       root_name: work
 
     #
@@ -306,7 +306,7 @@ paths:
 
      # The location of maya reviews
     maya_asset_review:
-      definition: assets/{sg_asset_type}/{Asset}/review/{name}.[{filetag}.]v{version}.mov
+      definition: assets/{sg_asset_type}/{Asset}/review/{name}.[{filetag}.][v{version}].mov
       root_name: work
 
     #

@@ -65,8 +65,10 @@ class PrePublishHook(Hook):
                             errors: List
                                     A list of error messages (strings) to report    
                         }
-        """       
+        """
         results = []
+        
+        
         
         # validate tasks:
         for task in tasks:
@@ -82,6 +84,8 @@ class PrePublishHook(Hook):
                 errors.extend(self._validate_item_for_alembic_cache_publish(item))
             elif output['name'] == "review":
                 print ("playblast camera" + str(item))
+            elif output["name"] == "deadline":
+                print 'Farm that shit!'
             else:
                 # don't know how to publish this output types!
                 errors.append("Don't know how to publish this item!")       

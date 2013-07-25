@@ -81,7 +81,7 @@ engines:
           name: alembic_cache
           publish_template: cache_alembic
           required: false
-          scene_item_type: mesh_group
+          scene_item_type: asset
           selected: false
           tank_type: Alembic Cache
         - description: Choose cameras for Playblast
@@ -94,6 +94,16 @@ engines:
           scene_item_type: shotcam
           selected: false
           tank_type: Review Quicktime
+        - description: Send to farm!
+          display_group: Render
+          display_name: Deadline
+          icon: icons/playblast_publish.png
+          name: deadline
+          publish_template: maya_shot_review
+          required: false
+          scene_item_type: render
+          selected: false
+          tank_type: Deadline Render
         template_work: maya_shot_work
         
       tk-multi-recentfiles:

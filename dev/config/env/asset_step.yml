@@ -81,7 +81,7 @@ engines:
           name: alembic_cache
           publish_template: cache_alembic_asset
           required: false
-          scene_item_type: mesh_group
+          scene_item_type: asset
           selected: false
           tank_type: Alembic Cache
         - description: Choose cameras for Review

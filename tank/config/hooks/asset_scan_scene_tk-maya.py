@@ -84,7 +84,9 @@ class ScanSceneHook(Hook):
         #create Preview items   
         for node in pm.ls(type='camera'):  
             if node != 'frontShape' and node != 'sideShape' and node != 'topShape':
-                items.append(({"type": "shotcam", "name": node}))
-            
+                items.append({"type": "shotcam", "name": node, })
+        
+        #adding Deadline item
+        
         
         return items

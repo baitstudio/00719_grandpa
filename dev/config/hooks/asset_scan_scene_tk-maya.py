@@ -79,12 +79,11 @@ class ScanSceneHook(Hook):
                 assets[assetName].append(node)
                 
         for asset in assets:
-            items.append({"type":"mesh_group", "name":asset, "other_params": assets[asset] })
+            items.append({"type":"asset", "name":asset, "other_params": assets[asset] })
         
         #create Preview items   
         for node in pm.ls(type='camera'):  
             if node != 'frontShape' and node != 'sideShape' and node != 'topShape':
                 items.append({"type": "shotcam", "name": node, })
-            
         
         return items

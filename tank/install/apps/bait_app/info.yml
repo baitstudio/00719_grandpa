@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2012 Shotgun Software, Inc
+# ----------------------------------------------------
+#
+# Metadata defining the behaviour and requirements for this engine
+
+# expected fields in the configuration file for this engine
+configuration:
+
+    hook_setup_new_scene:
+        type: hook
+        description: Sets up a new scene based on context information from Tank
+        parameters: [ctx]
+        default_value: setup_new_scene
+
+# the Shotgun fields that this engine needs in order to operate correctly
+requires_shotgun_fields:
+        
+        
+# this app works in all engines - it does not contain 
+# any host application specific commands
+supported_engines: 
+
+
+# More verbose description of this item 
+display_name: "Bait App"
+description: "App holding all custom tank utillities for Bait Studio"
+
+# Required minimum versions for this item to run
+requires_shotgun_version:
+requires_core_version: "v0.12.6"
+requires_engine_version:
+
+# the frameworks required to run this app
+frameworks:
+            
