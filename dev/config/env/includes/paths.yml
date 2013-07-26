@@ -17,9 +17,9 @@ maya_linux: maya
 #
 # nuke
 #
-nuke_mac: /Applications/Nuke6.3v8/Nuke6.3v8.app
-nuke_windows: 'C:\Program Files\Nuke6.3v8\Nuke6.3.exe'
-nuke_linux: Nuke6.3
+nuke_mac: /Applications/Nuke7.0v8/Nuke7.0v8.app
+nuke_windows: 'C:\Program Files\Nuke7.0v8\Nuke7.0.exe'
+nuke_linux: Nuke7.0
 
 #
 # hiero
@@ -46,4 +46,3 @@ photoshop_extras:
 rv_mac: /Applications/RV64.app
 rv_win: C:\Program Files\RV\RV64.exe
 rv_linux: rv
-

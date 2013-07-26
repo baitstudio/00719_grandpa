@@ -107,12 +107,12 @@ paths:
 
     # The location of WIP files
     hiero_project_work:
-      definition: episodes/{Scene}/ingest/{name}.v{version}.hrox
-      root_name: work
+      definition: footage/episodes/{Episode}/ingest/{name}.v{version}.hrox
+      root_name: resources
       
     hiero_project_work_area:
-      definition: episodes/{Scene}/ingest
-      root_name: work
+      definition: footage/episodes/{Episode}/ingest
+      root_name: resources
       
     # The location of backups of WIP files
     hiero_project_snapshot: 'episodes/{Scene}/ingest/snapshots/{name}.v{version}.{timestamp}.hrox'
@@ -188,7 +188,7 @@ paths:
 
     # The location of maya renders
     maya_shot_render:
-      definition: /{Episode}/{Shot}/cg/v{version}/{Shot}_{name}_v{version}.{SEQ}.exr
+      definition: /{Episode}/{Shot}/cg/v{version}/{name}.v{version}.{SEQ}.exr
       root_name: renders
 
     maya_shot_render_area:
@@ -221,21 +221,21 @@ paths:
 
     # write node outputs
     nuke_shot_render_exr:
-      definition: /{Episode}/{Shot}/comp/v{version}/{Shot}_{name}_{channel}.v{version}.{SEQ}.exr
+      definition: /{Episode}/{Shot}/comp/v{version}/{Shot}_{name}.v{version}.{SEQ}.exr
       root_name: renders
-    nuke_shot_render_exr_review_mov:
-      definition: /{Episode}/{Shot}/review/v{version}/{Shot}_{name}_{channel}_v{version}.{iteration}.mov
+    nuke_shot_render_review_mov:
+      definition: /{Episode}/{Shot}/review/v{version}/{Shot}_{name}_v{version}.{iteration}.mov
       root_name: renders
     nuke_shot_render_exr_review_seq:
-      definition: /{Episode}/{Shot}/comp/v{version}/{Shot}_{name}_{channel}_v{version}.{iteration}.{SEQ}.exr
+      definition: /{Episode}/{Shot}/comp/v{version}/{Shot}_{name}_v{version}.{iteration}.{SEQ}.exr
       root_name: renders
     nuke_shot_render_pub_exr:
-      definition: /{Episode}/{Shot}/comp/elements/{name}/{Shot}_{name}_{channel}_v{version}.{SEQ}.exr
+      definition: /{Episode}/{Shot}/comp/elements/{name}/{Shot}_{name}_v{version}.{SEQ}.exr
       root_name: renders
 
     # review output
     shot_quicktime_quick:
-      definition: /{Episode}/{Shot}/review/v{version}/{Shot}_{name}_quick_{iteration}.mov
+      definition: /{Episode}/{Shot}/review/{Shot}_{name}_quick_{iteration}.mov
       root_name: renders
 
     #

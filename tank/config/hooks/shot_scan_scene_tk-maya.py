@@ -50,7 +50,9 @@ class ScanSceneHook(Hook):
                                             pre-publish and publish hooks
                         }
         """   
-                
+        
+        ctx=self.parent.context
+          
         items = []
         
         # get the main scene:
@@ -66,24 +68,21 @@ class ScanSceneHook(Hook):
         
         #create alembic items
         assets={}
-        nodes = pm.ls(sl=True)
         for node in pm.ls(type='transform'):        
             if pm.PyNode(node).hasAttr('asset'):            
                 assetName=cmds.getAttr(node+'.asset')
                 assets[assetName]=[]            
                 nodes.append(node)
-        
-        if len(nodes)>0:
-            for node in nodes:               
-                assetName=cmds.getAttr(node+'.asset')
-                assets[assetName].append(node)
-                
+               
         for asset in assets:
-            items.append({"type":"mesh_group", "name":asset, "other_params": assets[asset] })
+            items.append({"type":"asset", "name":asset, "other_params": assets[asset] })
         
         #create Preview items   
         for node in pm.ls(type='camera'):     
-            items.append(({"type": "shotcam", "name": node}))
-            
+            items.append({"type": "shotcam", "name": node})
+        
+        #adding Deadline item
+        if ctx.step['name']=='Light':
+            items.append({"type": "render", "name": 'deadline_render'})
         
         return items

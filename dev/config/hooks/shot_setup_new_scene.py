@@ -12,6 +12,7 @@ import pymel.core as pm
 import Maya.utils as mu
 import Maya.sim as ms
 import Shotgun.utils as su
+import shutil
 
 class SetupNewScene(tank.Hook):
     
@@ -20,29 +21,34 @@ class SetupNewScene(tank.Hook):
         #query engine
         if self.parent.engine.name == "tk-maya":
             
-            #query context
-            tk=self.parent.tank
-            ctx=self.parent.context
-            maya_work=tk.templates['shot_work_area']
+            #confirmation to setup scene
+            confirm=pm.confirmDialog( title='Confirm', message='Do you want Shotgun to setup the scene?', button=['Yes','No'], defaultButton='Yes', cancelButton='No', dismissString='No' )
             
-            fields=ctx.as_template_fields(maya_work)
+            if confirm=='Yes':
             
-            #animation setup
-            if fields['Step']=='Anim':
-                self.maya_anim_setup()
-                            
-            #simulation setup
-            elif fields['Step']=='Sim':
-                self.maya_sim_setup('test', 'test2')
+                #query context
+                tk=self.parent.tank
+                ctx=self.parent.context
+                maya_work=tk.templates['shot_work_area']
                 
-             #lighting setup
-            elif fields['Step']=='Light':
-                self.maya_light_setup()
+                fields=ctx.as_template_fields(maya_work)
+                
+                #animation setup
+                if fields['Step']=='Anim':
+                    self.maya_anim_setup(fields, tk, ctx)
+                                
+                #simulation setup
+                elif fields['Step']=='Sim':
+                    self.maya_sim_setup(fields, tk, ctx)
+                    
+                #lighting setup
+                elif fields['Step']=='Light':
+                    self.maya_light_setup(fields, tk, ctx)
+            
+            else:
+                return True
     
-    
-    def maya_sim_setup(self):
-        
-        pm.confirmDialog( title='Confirm', message='Are you sure you want to create a new scene?', button=['Yes','No'], defaultButton='Yes', cancelButton='No', dismissString='No' )
+    def maya_sim_setup(self, fields, tk, ctx):
         
         print 'setting up maya Sim scene'
               
@@ -51,12 +57,7 @@ class SetupNewScene(tank.Hook):
         clothFile = assets[0]['path']['local_path_windows']
         print clothFile
         #setup reference plate
-        tk=self.parent.tank
         
-        ctx=self.parent.context
-        maya_work=tk.templates['shot_work_area']
-        
-        fields=ctx.as_template_fields(maya_work)
         assets = ['grandpa', 'start_null']
         
         cmds.file(newFile=True, force=True)
@@ -111,39 +112,35 @@ class SetupNewScene(tank.Hook):
             i += 1
 
         
-    def maya_anim_setup(self,variable, var):
-        
-        pm.confirmDialog( title='Confirm', message='Are you sure you want to create a new scene?', button=['Yes','No'], defaultButton='Yes', cancelButton='No', dismissString='No' )
+    def maya_anim_setup(self, fields, tk, ctx):
         
         #pm.newFile(f=1, typ='mayaAscii')
         
+        print 'Preparing new animation Scene'
+        
         cmds.file(newFile=True, force=True)
-        '''
+        
         #referencing latest rigs
+        print 'Finding latest Grandpa Rig'
         assets=su.getLatestShotAssets(self,'rig',specific='Grandpa')
         
         if len(assets)>0:
-        
             for asset in assets:
-                
                 mu.referenceAsset(asset['path']['local_path_windows'])
         else:
             cmds.warning('Could not find any assets to reference! Please link the assets in shotgun.')
-        '''
-        #referencing latest camera track
-        camData=su.getLatestShotAssets(self,'cam',specific=None)
         
+
         #query asset cameras, if none exists get shot cameras instead
         camNodes=None
-        if len(camData)<1:
-            camData=su.getLatestShotFile(self,'cam', 'FUUUUUUUUUUUUCK')
-            
-            if camData!=None:
-                camNodes=mu.referenceAsset(camData['path']['local_path_windows'])
-            else:
-                cmds.warning('Could not find any asset cameras to reference!')
+
+        camData=su.getLatestShotFile(tk, ctx, filetag='cam')
+        
+        if camData!=None:
+            camNodes=mu.referenceAsset(camData[0]['path']['local_path_windows'])
         else:
-            camNodes=mu.referenceAsset(camData['path']['local_path_windows'])
+            cmds.warning('Could not find any asset cameras to reference!')
+
         
         #getting camera node
         if camNodes!=None:
@@ -153,14 +150,14 @@ class SetupNewScene(tank.Hook):
                     cam=node
             
             #setup reference plate
-            tk=self.parent.tank
+            #tk=self.parent.tank
             
-            ctx=self.parent.context
+            #ctx=self.parent.context
             maya_work=tk.templates['shot_work_area']        
             fields=ctx.as_template_fields(maya_work)
             
             
-            low_plate=tk.templates['low_resolution_plate']
+            low_plate=tk.templates['low_res_proxy_plate_path']
             plateDir=low_plate.parent.apply_fields(fields)
             
             firstFile=os.listdir(plateDir)[0]
@@ -170,7 +167,7 @@ class SetupNewScene(tank.Hook):
         else:
             cmds.warning('Could not find any cameras to reference!')
         
-    def maya_light_setup(self):       
+    def maya_light_setup(self, fields, tk, ctx):       
         
         '''
         This script is errorring, but once it runs through everything is setup correctly
@@ -186,109 +183,151 @@ class SetupNewScene(tank.Hook):
        
         '''        
         
-        pm.confirmDialog( title='Confirm', message='Are you sure you want to create a new scene?', button=['Yes','No'], defaultButton='Yes', cancelButton='No', dismissString='No' )
-        
-        pm.newFile(f=1, typ='mayaAscii')
+        cmds.file(newFile=True, force=True)
         
         print ('Communicating with shotgun, please wait!')
                         
-        tk=self.parent.tank      
-        ctx=self.parent.context
+         
+        temp_file=tk.templates['light_setup_temp']
+        #fields_temp=ctx.as_template_fields(temp_file)
+        #tempPath = temp_file.apply_fields(fields_temp)
+        
+        work_template=tk.templates['maya_shot_work']
+        
+        dst=temp_file.apply_fields(fields)
+
         
         try:
             pm.loadPlugin('mtoa.mll')           
         except:
             pass
-       
+
         
         #Open Arnold Renders Settings template
-        arnoldSetup=su.getLatestShotAssets(self,'rend')
-        print str(arnoldSetup)
-                
-        for file in arnoldSetup:
-            pm.system.openFile(file['path']['local_path_windows'], force=True)
- 
-        temp_file=tk.templates['light_setup_temp']
-        fields_temp=ctx.as_template_fields(temp_file)
-        tempPath = temp_file.apply_fields(fields_temp)
-        pm.system.saveAs(tempPath)
         
+        arnoldSetup="M:/00719_grandpa/assets/Environments/arnoldTemplate/publish/arnoldTemplate.rend.v001.ma"
+        #print str(arnoldSetup)
+        shutil.copyfile(arnoldSetup, dst) 
+        
+        '''  
+        arnoldSetup=su.getLatestShotAssets(self,'rend') 
+        for file in arnoldSetup:
+            #pm.system.openFile(file['path']['local_path_windows'], force=True)
+            shutil.copyfile(file['path']['local_path_windows'], dst)
+        ''' 
+        
+        pm.system.openFile(dst, force=True)    
+        
+        
+        #print ('path is' + tempPath)
+        #pm.system.saveAs(tempPath)
+        
+        
+        #scene_path = os.path.abspath(cmds.file(query=True, sn=True))
+        #print scene_path
+
+        
+        
+        
+        print ('getting latest shot assets')
         #reference light setup scene 
         lightSetup=su.getLatestShotAssets(self,'light')
-        
+        print lightSetup
+    
         for asset in lightSetup: 
-            print ('loading reference: ' + asset['path']['local_path_windows'])         
+            print ('loading reference: ' + (asset['path']['local_path_windows']))      
             setNodes = mu.referenceAsset(asset['path']['local_path_windows'])
             
             for node in setNodes:
-                print ('node is: ' + node)
+                #print ('node is: ' + node)
                 if pm.nodeType(node) == 'mesh':
                     mesh = pm.PyNode(node)
-                    print ('mesh is: ' + mesh)       
+                    #print ('mesh is: ' + mesh)       
                     mesh.aiSelfShadows.set(0)
                     mesh.aiOpaque.set(0)   
                     # NAME OF SHADOW CATCHER IS HARDCODED HERE FOR NOW#                    
                     ShadowCatcherSG = 'ShadowCatcher_matSG'
                     pm.sets(ShadowCatcherSG, e=True, forceElement=mesh)
+                    
         
         #referencing latest camera file 
-        camData=su.getLatestShotFile(self, 'cam')        
-        print ('loading cameras') 
+        print ('getting latest cameras')
+        camData=su.getLatestShotFile(tk,ctx, filetag='cam')        
         
-        if len(camData)<1:
-                camData=su.getLatestShotFile(self, 'cam')
+        #Checks if shot camera exists. If not tries to find asset camera related to the shot.
+        print ('referencing camera')
+        for cam in camData:
+            print ('camera is: ' + cam['path']['local_path_windows'])
+            camNodes=mu.referenceAsset(cam['path']['local_path_windows'])
+        
+        
                 
-                camNodes=mu.referenceAsset(camData['path']['local_path_windows'])
-        else:
-                camNodes=mu.referenceAsset(camData['path']['local_path_windows'])
-                
-        #connect camera to projection        
+        #connect camera to projection
+        print ('connecting camera to projection')        
         for node in camNodes:       
             if pm.nodeType(node) == 'camera':
                 cam=pm.PyNode(node)
                 print cam
                 projection = pm.PyNode('projection')
                 cam.message >> projection.linkedCamera
-                
+              
         #assign backplate to shadowcatcher material
-            tk=self.parent.tank
+            #tk=self.parent.tank
             
-            ctx=self.parent.context
-            maya_work=tk.templates['shot_work_area']        
-            fields=ctx.as_template_fields(maya_work)
-                       
-            low_plate=tk.templates['low_resolution_plate']
-            plateDir=low_plate.parent.apply_fields(fields)
-            
+            #ctx=self.parent.context
+        maya_work=tk.templates['shot_work_area']        
+        fields=ctx.as_template_fields(maya_work)
+                   
+        low_plate=tk.templates['low_res_proxy_plate_path']
+        plateDir=low_plate.parent.apply_fields(fields)
+        print ('plates: ' + plateDir)
+        
+        try:
             firstFile=os.listdir(plateDir)[0]
-            
             imagePath=plateDir+'/'+firstFile
             pm.PyNode('backplate').fileTextureName.set(imagePath)    
- 
+        except:
+            pass
                
         #set Arnold DOF attribute on the camera        
         cam.aiEnableDOF.set(1)
+
         
-       #import alembic files and reference shaded assets
+        #import alembic files and reference shaded assets
         shotAssets=su.getLatestShotAssets(self,'shaded') 
-        cache_alembic=tk.templates['cache_alembic']
-        fields=ctx.as_template_fields(cache_alembic)
+        print shotAssets
+        
+        shotCaches= su.getLatestShotFile(tk, ctx, publishedType = 'Alembic Cache') 
+        print shotCaches
+        
+        abc_template=tk.templates['cache_alembic']
+             
+        #for cache in shotCaches:
+        input_path=shotCaches[0]['path']['local_path_windows']
+        fields=abc_template.get_fields(input_path)   
+        for file in shotCaches:
+            print ('cache path: ' + file['path']['local_path_windows'])
+            print file['name']     
+        print fields
         
         failedNodes= []
         for asset in shotAssets:
-            
-            print ('loading reference for' + asset['assetName']) 
-            refNodes = mu.referenceAsset(asset['path']['local_path_windows'])
-            fields['Asset']=asset['assetName']
-            abcFile = cache_alembic.apply_fields(fields)
-            #make temporary namespace
-            pm.namespace(add='temp')
-            pm.namespace(set='temp')
-            #import alembic cache for current asset
-            grp = pm.group( em=True, name=asset['assetName'] )
-            print ('loading alembic cache for' + asset['assetName'])
-            mu.alembicImport(abcFile, 'parent', parent=grp)
-            print ('transfering shaders for' + asset['assetName'])
+            try:           
+                print ('loading reference for' + asset['assetName']) 
+                refNodes = mu.referenceAsset(asset['path']['local_path_windows'])
+                print refNodes
+                fields['Asset']=asset['assetName']
+                abcFile = abc_template.apply_fields(fields)
+                #make temporary namespace
+                pm.namespace(add='temp')
+                pm.namespace(set='temp')
+                #import alembic cache for current asset
+                grp = pm.group( em=True, name=asset['assetName'] )
+                print ('loading alembic cache for' + asset['assetName'])
+                mu.alembicImport(abcFile, 'parent', parent=grp)
+                print ('transfering shaders for' + asset['assetName'])
+            except:
+                print ('asset wasn')
             
             transformNodes = []
             for node in refNodes:
@@ -326,10 +365,12 @@ class SetupNewScene(tank.Hook):
         
         #copy objects from master layer to shadow layer
         renderNodes = pm.editRenderLayerMembers(masterLayer, query=True )
+        print
         try:
             pm.editRenderLayerMembers(shadowLayer, renderNodes)
         except:
-            print 'ups'
+            print 'couldn\' copy objects to shadow layer'
+          
         #make sure we are in the Default render layer    
         masterLayer.setCurrent() 
         #set parameters on members 
@@ -346,8 +387,12 @@ class SetupNewScene(tank.Hook):
                     mesh.aiSelfShadows.set(0)
                     mesh.aiOpaque.set(0)
                 except:
-                    print (node + 'is probably not a mesh')
-        
+                    print ('This node is not a mesh: ' + node)
+            else:
+                pass
+                
+                
+                
         #switch to Shadow render layer        
         shadowLayer.setCurrent()    
         # Apply layer overrides for shadows catchers and assets    
@@ -362,9 +407,11 @@ class SetupNewScene(tank.Hook):
                     mel.eval('editRenderLayerAdjustment "%s.primaryVisibility";' % mesh)
                     mesh.primaryVisibility.set(1)
                 except:
-                    print (node + 'is probably not a mesh')
+                    print ('This node is not a mesh: ' + node)
+            else:
+                pass
                 #mesh.aiSelfShadows.set(0)
                 #mesh.aiOpaque.set(0)
         
         pm.confirmDialog( title='Report', message=('New scene was created. These objects couldn\'t have shaders applied: )' + str(failedNodes)), button=['Ok', 'No'], defaultButton='Yes', cancelButton='No', dismissString='No' )
-    
+        

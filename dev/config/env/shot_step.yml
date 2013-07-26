@@ -97,7 +97,7 @@ engines:
         - description: Send to farm!
           display_group: Render
           display_name: Deadline
-          icon: icons/playblast_publish.png
+          icon: icons/farm_publish.png
           name: deadline
           publish_template: maya_shot_review
           required: false
@@ -167,10 +167,12 @@ engines:
     - {app_instance: tk-multi-publish-shot, name: Publish Shot...}
     template_project: shot_work_area
     use_sgtk_as_menu_name: false
+    
   tk-nuke:
     apps:
       tk-multi-about:
         location: {name: tk-multi-about, type: app_store, version: v0.1.10}
+        
       tk-multi-loader:
         button_name: Load Selected Item
         dependency_mode: false
@@ -181,8 +183,9 @@ engines:
         sg_entity_types:
           Shot: []
         single_select: true
-        tank_types: [Rendered Image]
+        tank_types: [CG Render]
         title_name: Add items to your Scene
+        
       tk-multi-publish:
         display_name: Publish
         hook_copy_file: default
@@ -201,16 +204,25 @@ engines:
         primary_scene_item_type: work_file
         primary_tank_type: Nuke Script
         secondary_outputs:
-        - {description: Render output from Tank write nodes, display_group: Renders,
-          display_name: Nuke Render, icon: icons/publish_nuke_writenode.png, name: render,
-          publish_template: null, required: false, scene_item_type: write_node, selected: false,
-          tank_type: Rendered Image}
+        - description: Render output from Tank write nodes
+          display_group: Renders
+          display_name: Nuke Render
+          icon: icons/publish_nuke_writenode.png
+          name: render
+          publish_template: null
+          required: false
+          scene_item_type: write_node
+          selected: false
+          tank_type: Rendered Image
         template_work: nuke_shot_work
+        
       tk-multi-screeningroom: '@launch_screeningroom'
+      
       tk-multi-setframerange:
         location: {name: tk-multi-setframerange, type: app_store, version: v0.1.5}
         sg_in_frame_field: sg_cut_in
         sg_out_frame_field: sg_cut_out
+        
       tk-multi-snapshot:
         hook_copy_file: default
         hook_scene_operation: default
@@ -218,19 +230,22 @@ engines:
         location: {name: tk-multi-snapshot, type: app_store, version: v0.2.0}
         template_snapshot: nuke_shot_snapshot
         template_work: nuke_shot_work
+        
       tk-multi-workfiles:
         hook_copy_file: default
         hook_scene_operation: default
         location: {name: tk-multi-workfiles, type: app_store, version: v0.3.6}
         sg_entity_types: [Shot, Asset]
         template_publish: nuke_shot_publish
-        template_publish_area: shot_publish_area_nuke
+        template_publish_area: shot_publish_area
         template_work: nuke_shot_work
-        template_work_area: shot_work_area_nuke
+        template_work_area: shot_work_area
+        
       tk-nuke-breakdown:
         hook_multi_update: default
         hook_scan_scene: default
         location: {name: tk-nuke-breakdown, type: app_store, version: v0.2.14}
+        
       tk-nuke-quickdailies:
         current_scene_template: nuke_shot_work
         height: 768
@@ -239,38 +254,29 @@ engines:
         post_hooks: [snapshot_history_post_quickdaily]
         sg_version_name_template: nuke_quick_shot_version_name
         width: 1024
+        
       tk-nuke-review:
         hook_copy_sequence_file: default
         hook_create_content: default
-        hook_scan_scene: default
+        hook_scan_scene: review_scan_scene
         location: {name: tk-nuke-review, type: app_store, version: v0.2.3}
         mappings:
-        - {input_template: nuke_shot_render_stereo, quicktime_output_template: nuke_shot_render_stereo_review_mov,
-          sequence_output_template: nuke_shot_render_stereo_review_seq, version_name_template: nuke_shot_version_name}
-        - {input_template: nuke_shot_render_mono_dpx, quicktime_output_template: nuke_shot_render_mono_dpx_review_mov,
-          sequence_output_template: nuke_shot_render_mono_dpx_review_seq, version_name_template: nuke_shot_version_name}
+        - input_template: nuke_shot_render_exr
+          quicktime_output_template: nuke_shot_render_review_mov
+          sequence_output_template: nuke_shot_render_exr_review_seq
+          version_name_template: nuke_shot_version_name
+          
       tk-nuke-writenode:
         location: {name: tk-nuke-writenode, type: app_store, version: v0.1.5}
         template_script_work: nuke_shot_work
         write_nodes:
         - file_type: exr
-          name: Stereo Exr, 32 bit
-          publish_template: nuke_shot_render_pub_stereo
-          render_template: nuke_shot_render_stereo
-          settings: {datatype: 32 bit float}
-          tank_type: Rendered Image
-        - file_type: exr
           name: Stereo Exr, 16 bit
-          publish_template: nuke_shot_render_pub_stereo
-          render_template: nuke_shot_render_stereo
+          publish_template: nuke_shot_render_pub_exr
+          render_template: nuke_shot_render_exr
           settings: {datatype: 16 bit half}
           tank_type: Rendered Image
-        - file_type: dpx
-          name: Mono Dpx
-          publish_template: nuke_shot_render_pub_mono_dpx
-          render_template: nuke_shot_render_mono_dpx
-          settings: {}
-          tank_type: Rendered Image
+
     debug_logging: false
     location: {name: tk-nuke, type: app_store, version: v0.2.12}
     menu_favourites:
@@ -280,6 +286,7 @@ engines:
     - {app_instance: tk-multi-publish, name: Publish...}
     - {app_instance: tk-nuke-review, name: Submit for Review...}
     use_sgtk_as_menu_name: false
+    
   tk-photoshop:
     apps:
       tk-multi-about:

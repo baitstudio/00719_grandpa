@@ -6,6 +6,7 @@ Copyright (c) 2013 Shotgun Software, Inc
 import os
 import maya.cmds as cmds
 
+import sgtk
 import tank
 from tank import Hook
 from tank import TankError
