@@ -112,15 +112,6 @@ engines:
         location: {name: tk-multi-recentfiles, type: app_store, version: v0.2.9}
         template_work: maya_shot_work
         
-      tk-multi-recentfiles2:
-        display_name: Recent Files xtra
-        hook_add_file_to_scene: default
-        hook_setup_new_scene: default
-        launch_at_startup: true
-        location: {name: tk-multi-recentfiles, path: 'K:/Tank/00719_grandpa/dev/install/apps/tk-multi-recentfiles',
-          type: dev}
-        template_work: maya_shot_work
-        
       bait-app:
         display_name: BAIT app
         location: {name: bait_app, path: 'K:/Tank/00719_grandpa/dev/install/apps/bait_app',
@@ -150,7 +141,7 @@ engines:
         
       tk-multi-workfiles:
         hook_copy_file: default
-        hook_scene_operation: default
+        hook_scene_operation: shot_scene_operation_tk_maya
         location: {name: tk-multi-workfiles, type: app_store, version: v0.3.6}
         sg_entity_types: [Shot, Asset]
         template_publish: maya_shot_publish
