@@ -4,8 +4,9 @@ engines:
     apps:
       tk-hiero-export:
         default_task_template: Basic shot template
-        hook_translate_template: default
-        location: {name: tk-hiero-export, type: app_store, version: v0.1.1}
+        hook_translate_template: hiero_translate_template_gnp
+        location: {name: tk-hiero-export, path: 'K:/Tank/00719_grandpa/dev/install/apps/tk-hiero-export',
+          type: dev}
         template_nuke_script_path: hiero_nuke_script_path
         template_plate_path: high_res_plate_path
         template_render_path: hiero_render_path

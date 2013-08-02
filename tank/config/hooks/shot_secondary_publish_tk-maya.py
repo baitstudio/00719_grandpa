@@ -132,7 +132,17 @@ class PublishHook(Hook):
                 results.append({"task":task, "errors":errors})
              
             progress_cb(100)
-             
+        
+        #updating shotgun status
+        print 'updating shotgun status'
+        
+        taskId=self.parent.context.task['id']
+        sg=self.parent.shotgun
+        
+        data = {'sg_status_list':'cmpt' }
+        
+        sg.update("Task",taskId,data)
+        
         return results
 
     def _publish_render(self, item, output, work_template, primary_publish_path, sg_task, comment, thumbnail_path, progress_cb):
@@ -255,9 +265,11 @@ class PublishHook(Hook):
        
         # node loop 
         nodesString=''   
-        item["other_params"] 
+        print item["other_params"] 
         for node in item["other_params"]:
             nodesString+='-root '+node+' '
+        print nodesString
+        
              
         #export with assets attribute
         attrstring='-a asset'

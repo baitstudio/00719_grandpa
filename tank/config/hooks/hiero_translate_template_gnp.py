@@ -25,7 +25,8 @@ class HieroTranslateTemplate(Hook):
         """
         
         # first convert basic fields
-        mapping = { "{Sequence}": "{sequence}",
+        mapping = { "{Scene}": "{project}",
+                   "{Episode}": "{project}",
                     "{Shot}": "{shot}",
                     "{name}": "{clip}" }
         
