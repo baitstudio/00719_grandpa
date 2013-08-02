@@ -228,13 +228,13 @@ paths:
       definition: /{Episode}/{Shot}/comp/v{version}/{Shot}_{name}.v{version}.{SEQ}.exr
       root_name: renders
     nuke_shot_render_review_mov:
-      definition: /{Episode}/{Shot}/review/v{version}/{Shot}_{name}_v{version}.{iteration}.mov
+      definition: /{Episode}/{Shot}/review/v{version}/{Shot}_{name}.v{version}.{iteration}.mov
       root_name: renders
     nuke_shot_render_exr_review_seq:
-      definition: /{Episode}/{Shot}/comp/v{version}/{Shot}_{name}_v{version}.{iteration}.{SEQ}.exr
+      definition: /{Episode}/{Shot}/comp/v{version}/{Shot}_{name}.v{version}.{iteration}.{SEQ}.exr
       root_name: renders
     nuke_shot_render_pub_exr:
-      definition: /{Episode}/{Shot}/comp/elements/{name}/{Shot}_{name}_v{version}.{SEQ}.exr
+      definition: /{Episode}/{Shot}/comp/elements/v{version}/{Shot}_{name}.v{version}.{SEQ}.exr
       root_name: renders
 
     # review output

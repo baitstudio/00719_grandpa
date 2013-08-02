@@ -242,6 +242,10 @@ class PublishHook(Hook):
         Export an Alembic cache for the specified item and publish it
         to Shotgun.
         """
+        #loading plugin
+        cmds.loadPlugin('AbcExport.mll',quiet=True)
+        cmds.loadPlugin('AbcImport.mll',quiet=True)
+        
         group_name = item["name"].strip("|")
         tank_type = output["tank_type"]
         publish_template = output["publish_template"]        

@@ -142,27 +142,6 @@ class PrimaryPrePublishHook(Hook):
             
             #raise sgtk.TankError("Unable to perform pre-publish for invisible meshes %s" % listString)
          
-        #flush any tranforms that arent a mesh
-        for transform in cmds.ls(type='transform'):  
-            if cmds.objExists(transform):
-                shapes=cmds.listRelatives(transform,shapes=True,fullPath=True)
-                #deleting empty transforms
-                if shapes:
-                    check=False
-                    for shape in shapes:      
-                        #deleting everything but meshes
-                        shapeType=cmds.nodeType(shape)
-                        if shapeType=='mesh':
-                            check=True
-                        if shapeType=='camera':
-                            cams=['front','top','persp','side']
-                            if transform in cams:
-                                check=True          
-                    if not check:
-                        cmds.delete(transform)
-                else:
-                    cmds.delete(transform)
-         
         #geo group
         geogrp=cmds.group(empty=True,n='geo')
          

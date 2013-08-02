@@ -184,10 +184,10 @@ engines:
         hook_primary_pre_publish: default
         hook_primary_publish: default
         hook_scan_scene: default
-        hook_secondary_pre_publish: default
-        hook_secondary_publish: default
+        hook_secondary_pre_publish: shot_secondary_pre_publish_tk_nuke
+        hook_secondary_publish: shot_secondary_publish_tk_nuke
         hook_thumbnail: default
-        location: {name: tk-multi-publish, type: app_store, version: v0.3.4}
+        location: {name: tk-multi-publish, type: app_store, version: v0.3.8}
         primary_description: Publishes and versions up the current Nuke script.
         primary_display_name: Nuke Publish
         primary_icon: icons/publish_nuke_main.png
@@ -195,11 +195,21 @@ engines:
         primary_scene_item_type: work_file
         primary_tank_type: Nuke Script
         secondary_outputs:
-        - description: Render output from Tank write nodes
-          display_group: Renders
-          display_name: Nuke Render
+        - description: Render locally
+          display_group: Render
+          display_name: Render Local
           icon: icons/publish_nuke_writenode.png
-          name: render
+          name: render_local
+          publish_template: null
+          required: false
+          scene_item_type: write_node
+          selected: false
+          tank_type: Rendered Image
+        - description: Render on the farm
+          display_group: Render
+          display_name: Render Network
+          icon: icons/publish_nuke_writenode.png
+          name: render_network
           publish_template: null
           required: false
           scene_item_type: write_node
@@ -338,4 +348,6 @@ frameworks:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.4}
   tk-framework-widget_v0.1.5:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.5}
+  tk-framework-widget_v0.1.16:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.16}
 include: ./includes/app_launchers.yml
