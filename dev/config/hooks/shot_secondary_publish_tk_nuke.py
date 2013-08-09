@@ -107,6 +107,7 @@ class PublishHook(Hook):
         # process tasks:
         for task in tasks:
             
+            item = task["item"]
             output = task["output"]
             
             # keep track of our errors for this task
@@ -174,10 +175,10 @@ class PublishHook(Hook):
                 except Exception, e:
                     errors.append("Submit to Screening Room failed - %s" % e)
             
+            #render local---
             elif output_name == 'render_local':
                 
-                item = task["item"]
-                
+                #rendering---
                 #getting write node
                 write_node = item.get("other_params", dict()).get("node")
                 
@@ -188,6 +189,22 @@ class PublishHook(Hook):
                 #render write node
                 nuke.execute(write_node,int(firstframe),int(lastframe),1)
                 
+                #validate renders---
+                # validate that the write node has rendered images to publish:
+                # ...
+                if not write_node_app:
+                    errors.append("Unable to validate write node '%s' without tk-nuke-writenode app!" % item["name"])
+                else:
+                    # get write node:
+                    write_node = item.get("other_params", dict()).get("node")
+                    if not write_node:
+                        errors.append("Could not find nuke node for item '%s'!" % item["name"])
+                    else:
+                        # do pre-publish:              
+                        errors = self._nuke_pre_publish_write_node_render(write_node, write_node_app, progress_cb)
+            
+                
+                #publishing files---
                 # publish write-node rendered sequence                
                 try:
                     (sg_publish, thumbnail_path) = self._publish_write_node_render(task, 
@@ -202,12 +219,44 @@ class PublishHook(Hook):
                     render_publishes[ write_node.name() ] = (sg_publish, thumbnail_path)
                 except Exception, e:
                     errors.append("Publish failed - %s" % e)
+                
+                #publishing to screening room---
+                # Submit published sequence to Screening Room
+                try:
+                    
+                    # If we have the tk-multi-reviewsubmission app we can create versions
+                    review_submission_app = self.parent.engine.apps.get("tk-multi-reviewsubmission")
+
+                    if not review_submission_app:
+                        self.parent.log_warning("The Review Submission app can not be found. "
+                                                "Shotgun Versions will not be automatically created.")
+                    
+                    else:
+                        
+                        # pick up sg data from the render dict we are maintianing
+                        # note: we assume that the rendering tasks always happen
+                        # before the review tasks inside the publish... 
+                        (sg_publish, thumbnail_path) = render_publishes[ write_node.name() ]
+                        
+                        self._send_to_screening_room(
+                            write_node,
+                            write_node_app,
+                            review_submission_app,
+                            sg_publish,
+                            sg_task,
+                            comment,
+                            thumbnail_path,
+                            progress_cb
+                        )
+
+                except Exception, e:
+                    errors.append("Submit to Screening Room failed - %s" % e)
             
             elif output_name == 'render_network':
                 
                 try:
                     self._network_render(item, output, work_template, primary_publish_path, 
-                                                        sg_task, comment, thumbnail_path, progress_cb)
+                                         sg_task, comment, thumbnail_path, progress_cb)
                 except Exception, e:
                     errors.append("Publish failed - %s" % e)
                    
@@ -224,29 +273,28 @@ class PublishHook(Hook):
 
         return results
     
-    def _network_render(self):
+    def _network_render(self, item, output, work_template, primary_publish_path, sg_task, comment, thumbnail_path, progress_cb):
         
-        '''
-        filePath=cmds.file(q=True,sn=True)
+        filePath=nuke.root()['name'].value() 
     
         name=os.path.basename(filePath)
-        start=int(cmds.getAttr('defaultRenderGlobals.startFrame'))
-        end=int(cmds.getAttr('defaultRenderGlobals.endFrame'))
+        start=int(nuke.root()['first_frame'].value())
+        end=int(nuke.root()['last_frame'].value())
         inputFilepath=filePath
         pluginArgs=['']
         submitArgs=['Comment=Shotgun Publish submit']
         shotgunContext=self.parent.context
         
         #getting fields for version
-        shot_temp=self.parent.sgtk.templates["maya_shot_work"]
+        shot_temp=self.parent.sgtk.templates["nuke_shot_work"]
         shotgunFields=shot_temp.get_fields(filePath)
         
         #getting output path
-        area_temp=self.parent.sgtk.templates['maya_shot_render_area']
+        area_temp=self.parent.sgtk.templates['nuke_shot_render_area']
         outputPath=area_temp.apply_fields(shotgunFields).replace('\\','/')
         
         #getting output fields
-        render_temp=self.parent.sgtk.templates['maya_shot_render']
+        render_temp=self.parent.sgtk.templates['nuke_shot_render_exr']
         outputFiles=render_temp.apply_fields(shotgunFields)
         outputFields=render_temp.get_fields(outputFiles)
         
@@ -256,37 +304,22 @@ class PublishHook(Hook):
         #generate outputFiles
         shotgunFiles=render_temp.apply_fields(outputFields)
         
-        outputFiles=[]
-        publishFiles=[]
-        for layer in cmds.ls(type='renderLayer'):
+        #setting output
+        publishFiles=[shotgunFiles]
+          
+        #clunky code to replace seq format with ?
+        cmd=''
+        maxCount=int(shotgunFiles.split('%')[-1].split('.')[0].replace('d',''))
+        for count in xrange(0,maxCount):
             
-            if layer=='defaultRenderLayer':
-                
-                layer='masterLayer'
-            
-            #clunky code to replace seq format with ?
-            cmd=''
-            maxCount=int(shotgunFiles.split('%')[-1].split('.')[0].replace('d',''))
-            for count in xrange(0,maxCount):
-                
-                cmd+='?'
-            
-            path=shotgunFiles.split('%')[0][0:-1]
-            ext=shotgunFiles.split('%')[-1].split('.')[-1]
-            
-            outputFile='.'.join([path,cmd,ext]).replace('\\','/')
-            
-            #adding renderlayer to outputfiles
-            filename=os.path.basename(outputFile)
-            dirpath=os.path.dirname(outputFile)
-            
-            outputFiles.append(os.path.join(dirpath,layer+'_'+filename))
-            
-            #adding renderlayer to shotgunfiles
-            filename=os.path.basename(shotgunFiles)
-            dirpath=os.path.dirname(shotgunFiles)
-            
-            publishFiles.append(os.path.join(dirpath,layer+'_'+filename))
+            cmd+='?'
+        
+        path=shotgunFiles.split('%')[0][0:-1]
+        ext=shotgunFiles.split('%')[-1].split('.')[-1]
+        
+        outputFile='.'.join([path,cmd,ext]).replace('\\','/')
+        
+        outputFiles=[outputFile]
         
         #getting login for user and replacing with user in shotgunContext
         shotgunUser=sgtk.util.get_current_user(self.parent.sgtk)
@@ -300,11 +333,11 @@ class PublishHook(Hook):
                 os.makedirs(dirpath)
         
         #submit to deadline
-        cdu.submit('maya', name, start, end, inputFilepath, outputPath, outputFiles, pluginArgs, submitArgs,
-                   shotgunContext=shotgunContext, shotgunFields=shotgunFields,shotgunUser=shotgunUser,mayaGUI=True)
+        cdu.submit('nuke', name, start, end, inputFilepath, outputPath, outputFiles, pluginArgs, submitArgs,
+                   shotgunContext=shotgunContext, shotgunFields=shotgunFields,shotgunUser=shotgunUser)
         
         # Finally, register this publish with Shotgun
-        tank_type='CG Render'
+        tank_type='Comp Render'
         name=item["name"]
         
         for outputfile in publishFiles:
@@ -316,13 +349,13 @@ class PublishHook(Hook):
                                    comment,
                                    thumbnail_path,
                                    [primary_publish_path])
-                                   '''
     
     def _send_to_screening_room(self, write_node, write_node_app, review_submission_app, sg_publish, sg_task, comment, thumbnail_path, progress_cb):
         """
         Take a write node's published files and run them through the
         review_submission app to get a movie and Shotgun Version.
         """
+        
         render_path = write_node_app.get_node_render_path(write_node)
         render_template = write_node_app.get_node_render_template(write_node)
         publish_template = write_node_app.get_node_publish_template(write_node)                        
@@ -440,9 +473,58 @@ class PublishHook(Hook):
         
         return sg_data
         
+    def _nuke_pre_publish_write_node_render(self, write_node, write_node_app, progress_cb):
+        """
+        Pre-publish render output for write node
+        """
+        errors = []
+        try:
+            # check to see if the write node path is currently locked:
+            if write_node_app.is_node_render_path_locked(write_node):
+                # renders for the write node can't be published - trying to publish 
+                # will result in an error in the publish hook!
+                errors.append("The render path is currently locked and does not match match the current Work Area.")
+            
+            progress_cb(10.0, "Finding rendered files")
+            
+            # get list of render files:
+            render_files = write_node_app.get_node_render_files(write_node)
+            if len(render_files) == 0:
+                is_valid = False
+                errors.append("No render files exist to be published!")
+            else:
+                # ensure that published files don't already exist
+        
+                # need the render template, publish template and tank type which are all 
+                # defined per node (profile) in the tk-nuke-writenode app
+                render_template = write_node_app.get_node_render_template(write_node)
+                publish_template = write_node_app.get_node_publish_template(write_node)                        
+                tank_type = write_node_app.get_node_tank_type(write_node)
+        
+                progress_cb(25.0, "Checking for existing files")
+                
+                # check files:
+                existing_files = []
+                for fi, rf in enumerate(render_files):
+                    
+                    progress_cb(25 + (75*(len(render_files)/(fi+1))))
+                    
+                    # construct the publish path:
+                    fields = render_template.get_fields(rf)
+                    fields["TankType"] = tank_type
+                    target_path = publish_template.apply_fields(fields)
+                
+                    if os.path.exists(target_path):
+                        existing_files.append(target_path)
+                        
+                if existing_files:
+                    # one or more published files already exist!
+                    msg = "Published render file '%s'" % existing_files[0]
+                    if len(existing_files) > 1:
+                        msg += " (+%d others)" % (len(existing_files)-1)
+                    msg += " already exists!"
+                    errors.append(msg)
+        except Exception, e:
+            errors.append("Unhandled exception: %s" % e)
 
-
-
-
-
-
+        return errors

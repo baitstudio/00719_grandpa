@@ -109,17 +109,7 @@ class PrePublishHook(Hook):
             
             elif output['name'] == 'render_local':
                 
-                #getting write node
-                write_node = item.get("other_params", dict()).get("node")
-                
-                #getting frame range
-                firstframe=nuke.toNode( "root" )['first_frame'].value()
-                lastframe=nuke.toNode( "root" )['last_frame'].value()
-                
-                #render write node
-                nuke.execute(write_node,int(firstframe),int(lastframe),1)
-                
-                errors.append('local render mess')
+                print 'Rendering Locally!'
             elif output['name'] == 'render_network':
                 
                 pass

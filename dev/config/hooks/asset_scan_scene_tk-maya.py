@@ -78,8 +78,8 @@ class ScanSceneHook(Hook):
                 assetName=cmds.getAttr(node+'.asset')
                 assets[assetName].append(node)
                 
-        for asset in assets:
-            items.append({"type":"asset", "name":asset, "other_params": assets[asset] })
+        #for asset in assets:
+        #    items.append({"type":"asset", "name":asset, "other_params": assets[asset] })
         
         #create Preview items   
         for node in pm.ls(type='camera'):  

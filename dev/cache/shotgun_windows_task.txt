@@ -3,5 +3,6 @@ show_in_filesystem$Show in File System$$True
 launch_photoshop$Launch Photoshop$$False
 preview_folders$Preview Create Folders$$True
 launch_hiero$Launch Hiero$$False
+launch_nukex$Launch NukeX$$False
 create_folders$Create Folders$$True
 launch_maya$Launch Maya$$False

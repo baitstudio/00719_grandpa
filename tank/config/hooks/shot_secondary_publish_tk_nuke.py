@@ -107,6 +107,7 @@ class PublishHook(Hook):
         # process tasks:
         for task in tasks:
             
+            item = task["item"]
             output = task["output"]
             
             # keep track of our errors for this task
@@ -176,8 +177,6 @@ class PublishHook(Hook):
             
             elif output_name == 'render_local':
                 
-                item = task["item"]
-                
                 #getting write node
                 write_node = item.get("other_params", dict()).get("node")
                 
@@ -207,7 +206,7 @@ class PublishHook(Hook):
                 
                 try:
                     self._network_render(item, output, work_template, primary_publish_path, 
-                                                        sg_task, comment, thumbnail_path, progress_cb)
+                                         sg_task, comment, thumbnail_path, progress_cb)
                 except Exception, e:
                     errors.append("Publish failed - %s" % e)
                    
@@ -224,29 +223,28 @@ class PublishHook(Hook):
 
         return results
     
-    def _network_render(self):
+    def _network_render(self, item, output, work_template, primary_publish_path, sg_task, comment, thumbnail_path, progress_cb):
         
-        '''
-        filePath=cmds.file(q=True,sn=True)
+        filePath=nuke.root()['name'].value() 
     
         name=os.path.basename(filePath)
-        start=int(cmds.getAttr('defaultRenderGlobals.startFrame'))
-        end=int(cmds.getAttr('defaultRenderGlobals.endFrame'))
+        start=int(nuke.root()['first_frame'].value())
+        end=int(nuke.root()['last_frame'].value())
         inputFilepath=filePath
         pluginArgs=['']
         submitArgs=['Comment=Shotgun Publish submit']
         shotgunContext=self.parent.context
         
         #getting fields for version
-        shot_temp=self.parent.sgtk.templates["maya_shot_work"]
+        shot_temp=self.parent.sgtk.templates["nuke_shot_work"]
         shotgunFields=shot_temp.get_fields(filePath)
         
         #getting output path
-        area_temp=self.parent.sgtk.templates['maya_shot_render_area']
+        area_temp=self.parent.sgtk.templates['nuke_shot_render_area']
         outputPath=area_temp.apply_fields(shotgunFields).replace('\\','/')
         
         #getting output fields
-        render_temp=self.parent.sgtk.templates['maya_shot_render']
+        render_temp=self.parent.sgtk.templates['nuke_shot_render_exr']
         outputFiles=render_temp.apply_fields(shotgunFields)
         outputFields=render_temp.get_fields(outputFiles)
         
@@ -256,37 +254,22 @@ class PublishHook(Hook):
         #generate outputFiles
         shotgunFiles=render_temp.apply_fields(outputFields)
         
-        outputFiles=[]
-        publishFiles=[]
-        for layer in cmds.ls(type='renderLayer'):
+        #setting output
+        publishFiles=[shotgunFiles]
+          
+        #clunky code to replace seq format with ?
+        cmd=''
+        maxCount=int(shotgunFiles.split('%')[-1].split('.')[0].replace('d',''))
+        for count in xrange(0,maxCount):
             
-            if layer=='defaultRenderLayer':
-                
-                layer='masterLayer'
-            
-            #clunky code to replace seq format with ?
-            cmd=''
-            maxCount=int(shotgunFiles.split('%')[-1].split('.')[0].replace('d',''))
-            for count in xrange(0,maxCount):
-                
-                cmd+='?'
-            
-            path=shotgunFiles.split('%')[0][0:-1]
-            ext=shotgunFiles.split('%')[-1].split('.')[-1]
-            
-            outputFile='.'.join([path,cmd,ext]).replace('\\','/')
-            
-            #adding renderlayer to outputfiles
-            filename=os.path.basename(outputFile)
-            dirpath=os.path.dirname(outputFile)
-            
-            outputFiles.append(os.path.join(dirpath,layer+'_'+filename))
-            
-            #adding renderlayer to shotgunfiles
-            filename=os.path.basename(shotgunFiles)
-            dirpath=os.path.dirname(shotgunFiles)
-            
-            publishFiles.append(os.path.join(dirpath,layer+'_'+filename))
+            cmd+='?'
+        
+        path=shotgunFiles.split('%')[0][0:-1]
+        ext=shotgunFiles.split('%')[-1].split('.')[-1]
+        
+        outputFile='.'.join([path,cmd,ext]).replace('\\','/')
+        
+        outputFiles=[outputFile]
         
         #getting login for user and replacing with user in shotgunContext
         shotgunUser=sgtk.util.get_current_user(self.parent.sgtk)
@@ -300,11 +283,11 @@ class PublishHook(Hook):
                 os.makedirs(dirpath)
         
         #submit to deadline
-        cdu.submit('maya', name, start, end, inputFilepath, outputPath, outputFiles, pluginArgs, submitArgs,
-                   shotgunContext=shotgunContext, shotgunFields=shotgunFields,shotgunUser=shotgunUser,mayaGUI=True)
+        cdu.submit('nuke', name, start, end, inputFilepath, outputPath, outputFiles, pluginArgs, submitArgs,
+                   shotgunContext=shotgunContext, shotgunFields=shotgunFields,shotgunUser=shotgunUser)
         
         # Finally, register this publish with Shotgun
-        tank_type='CG Render'
+        tank_type='Comp Render'
         name=item["name"]
         
         for outputfile in publishFiles:
@@ -316,7 +299,6 @@ class PublishHook(Hook):
                                    comment,
                                    thumbnail_path,
                                    [primary_publish_path])
-                                   '''
     
     def _send_to_screening_room(self, write_node, write_node_app, review_submission_app, sg_publish, sg_task, comment, thumbnail_path, progress_cb):
         """

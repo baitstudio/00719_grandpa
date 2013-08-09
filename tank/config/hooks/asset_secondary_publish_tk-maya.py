@@ -4,6 +4,7 @@ Copyright (c) 2013 Shotgun Software, Inc
 
 """
 import os
+import sys
 import shutil
 import maya.cmds as cmds
 import maya.mel as mel
@@ -12,6 +13,10 @@ import pymel.core as pm
 import tank
 from tank import Hook
 from tank import TankError
+
+sys.path.append('K:/')
+import CodeRepo.Deadline.utils as cdu
+reload(cdu)
 
 class PublishHook(Hook):
     """
@@ -117,6 +122,16 @@ class PublishHook(Hook):
              
             progress_cb(100)
              
+        #updating shotgun status
+        print 'updating shotgun status'
+        
+        taskId=self.parent.context.task['id']
+        sg=self.parent.shotgun
+        
+        data = {'sg_status_list':'cmpt' }
+        
+        sg.update("Task",taskId,data)
+        
         return results
 
     def _publish_alembic_cache_for_item(self, item, output, work_template, primary_publish_path, sg_task, comment, thumbnail_path, progress_cb):

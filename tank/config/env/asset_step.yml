@@ -74,16 +74,6 @@ engines:
         primary_scene_item_type: work_file
         primary_tank_type: Maya Scene
         secondary_outputs:
-        - description: Publish Alembic Cache data for the assets
-          display_group: Caches
-          display_name: Alembic Cache
-          icon: icons/alembic_output.png
-          name: alembic_cache
-          publish_template: cache_alembic_asset
-          required: false
-          scene_item_type: asset
-          selected: false
-          tank_type: Alembic Cache
         - description: Choose cameras for Review
           display_group: Review
           display_name: Create Playblast for Review

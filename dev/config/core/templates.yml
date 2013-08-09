@@ -220,7 +220,7 @@ paths:
 
     # The location of published nuke script files
     nuke_shot_publish:
-      definition: episodes/{Episode}/{Shot}/{Step}/publish/{name}.[{filetag}.]v{version}.[{SEQ}.]nk
+      definition: episodes/{Episode}/{Shot}/{Step}/publish/{name}.[{filetag}.]v{version}.nk
       root_name: work
 
     # write node outputs
@@ -235,6 +235,10 @@ paths:
       root_name: renders
     nuke_shot_render_pub_exr:
       definition: /{Episode}/{Shot}/comp/elements/v{version}/{Shot}_{name}.v{version}.{SEQ}.exr
+      root_name: renders
+      
+    nuke_shot_render_area:
+      definition: /{Episode}/{Shot}/comp/v{version}
       root_name: renders
 
     # review output

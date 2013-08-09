@@ -81,6 +81,9 @@ class SceneOperation(Hook):
                 elif fields['Step']=='Light':
                     self.light_setup(fields, tk, ctx)
                 
+                #setting fps to 25---
+                cmds.currentUnit(time='pal')
+                
                 #post setup---
                 commands = sgtk.platform.current_engine().commands
                 
@@ -276,7 +279,7 @@ class SceneOperation(Hook):
         
         #referencing latest rigs
         print 'Finding latest Grandpa Rig'
-        assets=su.getLatestShotAssets(self,'rig',specific='Grandpa')
+        assets=su.getLatestShotAssets(self,'rig')
         
         if len(assets)>0:
             for asset in assets:
@@ -314,10 +317,14 @@ class SceneOperation(Hook):
             low_plate=tk.templates['low_res_proxy_plate_path']
             plateDir=low_plate.parent.apply_fields(fields)
             
-            firstFile=os.listdir(plateDir)[0]
+            #try for image planes---
+            try:
+                firstFile=os.listdir(plateDir)[0]
             
-            imagePath=plateDir+'/'+firstFile
-            mu.imagePlane(cam, imagePath)
+                imagePath=plateDir+'/'+firstFile
+                mu.imagePlane(cam, imagePath)
+            except:
+                pass
         else:
             cmds.warning('Could not find any cameras to reference!')
         
@@ -387,11 +394,18 @@ class SceneOperation(Hook):
         #reference light setup scene 
         lightSetup=su.getLatestShotAssets(self,'light')
         print lightSetup
-    
+        
+        shadowLayer = pm.PyNode('shadowLayer')
+        masterLayer = pm.PyNode('defaultRenderLayer')
+        
         for asset in lightSetup: 
             print ('loading reference: ' + (asset['path']['local_path_windows']))      
             setNodes = mu.referenceAsset(asset['path']['local_path_windows'])
             
+            
+            
+            shadowLayer.setCurrent()  
+
             for node in setNodes:
                 #print ('node is: ' + node)
                 if pm.nodeType(node) == 'mesh':
@@ -402,7 +416,8 @@ class SceneOperation(Hook):
                     # NAME OF SHADOW CATCHER IS HARDCODED HERE FOR NOW#                    
                     ShadowCatcherSG = 'ShadowCatcher_matSG'
                     pm.sets(ShadowCatcherSG, e=True, forceElement=mesh)
-                    
+
+            masterLayer.setCurrent()  
         
         #referencing latest camera file 
         print ('getting latest cameras')
@@ -510,8 +525,7 @@ class SceneOperation(Hook):
             pm.namespace(mv=('temp', ':'))
             pm.namespace(rm='temp')
         
-        shadowLayer = pm.PyNode('shadowLayer')
-        masterLayer = pm.PyNode('defaultRenderLayer')
+        
         
         #copy objects from master layer to shadow layer
         renderNodes = pm.editRenderLayerMembers(masterLayer, query=True )

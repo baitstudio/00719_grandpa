@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FreeFileSync XmlFormat="1" XmlType="GUI">
+    <MainConfig>
+        <Comparison>
+            <Variant>ByTimeAndSize</Variant>
+            <HandleSymlinks>Ignore</HandleSymlinks>
+        </Comparison>
+        <SyncConfig>
+            <Variant>Mirror</Variant>
+            <CustomDirections>
+                <LeftOnly>right</LeftOnly>
+                <RightOnly>left</RightOnly>
+                <LeftNewer>right</LeftNewer>
+                <RightNewer>left</RightNewer>
+                <Different>none</Different>
+                <Conflict>none</Conflict>
+            </CustomDirections>
+            <DeletionPolicy>RecycleBin</DeletionPolicy>
+            <VersioningFolder Style="Replace"/>
+        </SyncConfig>
+        <GlobalFilter>
+            <Include>
+                <Item>*</Item>
+            </Include>
+            <Exclude>
+                <Item>\System Volume Information\</Item>
+                <Item>\$Recycle.Bin\</Item>
+                <Item>\RECYCLER\</Item>
+                <Item>\RECYCLED\</Item>
+                <Item>*\desktop.ini</Item>
+                <Item>*\thumbs.db</Item>
+                <Item>\cache\</Item>
+                <Item>\config\core\install_location.yml</Item>
+                <Item>\config\core\pipeline_configuration.yml</Item>
+                <Item>\config\core\roots.yml</Item>
+            </Exclude>
+            <TimeSpan Type="Inactive">0</TimeSpan>
+            <SizeMin Unit="Inactive">0</SizeMin>
+            <SizeMax Unit="Inactive">0</SizeMax>
+        </GlobalFilter>
+        <FolderPairs>
+            <Pair>
+                <Left>K:\Tank\00719_grandpa\dev</Left>
+                <Right>K:\Tank\00719_grandpa\tank</Right>
+            </Pair>
+        </FolderPairs>
+        <OnCompletion/>
+    </MainConfig>
+    <GuiConfig>
+        <HideExcluded>false</HideExcluded>
+        <HandleError>Popup</HandleError>
+        <MiddleGridView>Action</MiddleGridView>
+    </GuiConfig>
+</FreeFileSync>

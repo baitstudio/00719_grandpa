@@ -87,8 +87,9 @@ class ScanSceneHook(Hook):
             items.append({"type":"asset", "name":asset, "other_params": assets[asset] })
         
         #create Preview items   
-        for node in pm.ls(type='camera'):     
-            items.append({"type": "shotcam", "name": node})
+        for node in pm.ls(type='camera'):  
+            if node != 'frontShape' and node != 'sideShape' and node != 'topShape' and node != 'perspShape':
+                items.append({"type": "shotcam", "name": node, })
         
         #adding Deadline item
         if ctx.step['name']=='Light':
