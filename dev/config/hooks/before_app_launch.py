@@ -47,6 +47,8 @@ class BeforeAppLaunch(tank.Hook):
         #       do_something()
 
         #including custom nuke plugins path
+        
         os.environ['NUKE_PATH']=os.environ['NUKE_PATH']+';K:/CodeRepo/Nuke/plugins/'
+        
         
         

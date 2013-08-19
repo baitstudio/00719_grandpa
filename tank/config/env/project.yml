@@ -34,7 +34,7 @@ engines:
         template_work: null
         template_work_area: null
     debug_logging: false
-    location: {name: tk-nuke, type: app_store, version: v0.2.12}
+    location: {name: tk-nuke, type: app_store, version: v0.2.13}
     menu_favourites:
     - {app_instance: tk-multi-workfiles, name: Shotgun File Manager...}
     use_sgtk_as_menu_name: false
@@ -52,12 +52,12 @@ engines:
         template_work: null
         template_work_area: null
     debug_logging: true
-    location: {name: tk-photoshop, type: app_store, version: v0.1.0}
+    location: {name: tk-photoshop, type: app_store, version: v0.1.3}
   tk-shell:
     apps: {tk-multi-launchmaya: '@launch_maya', tk-multi-launchnuke: '@launch_nuke',
       tk-multi-launchphotoshop: '@launch_photoshop'}
     debug_logging: false
-    location: {name: tk-shell, type: app_store, version: v0.3.2}
+    location: {name: tk-shell, type: app_store, version: v0.3.3}
 frameworks:
   tk-framework-widget_v0.1.1:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.1}

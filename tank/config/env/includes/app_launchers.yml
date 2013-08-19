@@ -15,7 +15,7 @@ launch_hiero:
 launch_maya:
   engine: tk-maya
   extra: {}
-  hook_app_launch: default
+  hook_app_launch: app_launch
   hook_before_app_launch: default
   linux_args: ''
   linux_path: '@maya_linux'
@@ -29,7 +29,7 @@ launch_nuke:
   engine: tk-nuke
   extra: {}
   hook_app_launch: default
-  hook_before_app_launch: before_app_launch_tk_nuke
+  hook_before_app_launch: before_app_launch
   linux_args: ''
   linux_path: '@nuke_linux'
   location: {name: tk-multi-launchapp, type: app_store, version: v0.2.12}

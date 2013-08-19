@@ -17,6 +17,6 @@ engines:
       tk-shotgun-launchphotoshop: '@launch_photoshop'
       tk-shotgun-launchscreeningroom: '@launch_shotgun_screeningroom'
     debug_logging: false
-    location: {name: tk-shotgun, type: app_store, version: v0.3.3}
+    location: {name: tk-shotgun, type: app_store, version: v0.3.4}
 frameworks: null
 include: ./includes/app_launchers.yml

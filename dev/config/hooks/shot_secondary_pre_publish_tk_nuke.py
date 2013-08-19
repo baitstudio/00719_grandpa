@@ -106,7 +106,6 @@ class PrePublishHook(Hook):
                 if not self._get_render_task_for_task(tasks, task):
                     raise TankError("If you have the 'Send to Screening Room' box ticked, you "
                                     "must also have the 'Publish Renders' box ticked!")
-            
             elif output['name'] == 'render_local':
                 
                 print 'Rendering Locally!'
@@ -164,6 +163,7 @@ class PrePublishHook(Hook):
             if len(render_files) == 0:
                 is_valid = False
                 errors.append("No render files exist to be published!")
+            '''
             else:
                 # ensure that published files don't already exist
         
@@ -196,6 +196,7 @@ class PrePublishHook(Hook):
                         msg += " (+%d others)" % (len(existing_files)-1)
                     msg += " already exists!"
                     errors.append(msg)
+                    '''
         except Exception, e:
             errors.append("Unhandled exception: %s" % e)
 

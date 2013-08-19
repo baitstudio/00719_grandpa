@@ -127,7 +127,28 @@ class PublishHook(Hook):
         
             # depending on output type:
             if output_name == "render":
-
+                
+                #publish version
+                try:
+                    filePath=nuke.root()['name'].value()
+                    
+                    #getting fields for version
+                    shot_temp=self.parent.sgtk.templates["nuke_shot_work"]
+                    shotgunFields=shot_temp.get_fields(filePath)
+                    
+                    # get info we need in order to do the publish:
+                    render_path = write_node_app.get_node_render_path(write_node)
+                    render_template = write_node_app.get_node_render_template(write_node)
+                    publish_template = write_node_app.get_node_publish_template(write_node) 
+                    render_path_fields = render_template.get_fields(render_path)
+                    publish_path = publish_template.apply_fields(render_path_fields)
+                    
+                    #register the version
+                    self._register_version(shotgunFields, publish_path)
+                    
+                except Exception, e:
+                    errors.append("Publish version failed - %s" % e)
+                
                 # publish write-node rendered sequence                
                 try:
                     (sg_publish, thumbnail_path) = self._publish_write_node_render(task, 
@@ -175,8 +196,10 @@ class PublishHook(Hook):
                 except Exception, e:
                     errors.append("Submit to Screening Room failed - %s" % e)
             
+            #render local---
             elif output_name == 'render_local':
                 
+                #rendering---
                 #getting write node
                 write_node = item.get("other_params", dict()).get("node")
                 
@@ -187,6 +210,9 @@ class PublishHook(Hook):
                 #render write node
                 nuke.execute(write_node,int(firstframe),int(lastframe),1)
                 
+                #not validating renders atm, might be a problem?---
+                
+                #publishing files---
                 # publish write-node rendered sequence                
                 try:
                     (sg_publish, thumbnail_path) = self._publish_write_node_render(task, 
@@ -245,27 +271,22 @@ class PublishHook(Hook):
         
         #getting output fields
         render_temp=self.parent.sgtk.templates['nuke_shot_render_exr']
+        
         outputFiles=render_temp.apply_fields(shotgunFields)
         outputFields=render_temp.get_fields(outputFiles)
         
-        #replacing name with file name
-        outputFields['name']='.'.join(filePath.split('/')[-1].split('.')[0:-2])
-        
-        #generate outputFiles
-        shotgunFiles=render_temp.apply_fields(outputFields)
-        
         #setting output
-        publishFiles=[shotgunFiles]
+        publishFiles=[outputFiles]
           
         #clunky code to replace seq format with ?
         cmd=''
-        maxCount=int(shotgunFiles.split('%')[-1].split('.')[0].replace('d',''))
+        maxCount=int(outputFiles.split('%')[-1].split('.')[0].replace('d',''))
         for count in xrange(0,maxCount):
             
             cmd+='?'
         
-        path=shotgunFiles.split('%')[0][0:-1]
-        ext=shotgunFiles.split('%')[-1].split('.')[-1]
+        path=outputFiles.split('%')[0][0:-1]
+        ext=outputFiles.split('%')[-1].split('.')[-1]
         
         outputFile='.'.join([path,cmd,ext]).replace('\\','/')
         
@@ -305,6 +326,7 @@ class PublishHook(Hook):
         Take a write node's published files and run them through the
         review_submission app to get a movie and Shotgun Version.
         """
+        
         render_path = write_node_app.get_node_render_path(write_node)
         render_template = write_node_app.get_node_render_template(write_node)
         publish_template = write_node_app.get_node_publish_template(write_node)                        
@@ -340,6 +362,7 @@ class PublishHook(Hook):
         publish_template = write_node_app.get_node_publish_template(write_node)                        
         tank_type = write_node_app.get_node_tank_type(write_node)
         
+        '''
         # publish (copy files):
         
         progress_cb(25, "Copying files")
@@ -360,6 +383,7 @@ class PublishHook(Hook):
                 self.parent.copy_file(rf, target_path, task)
             except Exception, e:
                 raise TankError("Failed to copy file from %s to %s - %s" % (rf, target_path, e))
+                '''
             
         progress_cb(40, "Publishing to Shotgun")
             
@@ -422,9 +446,88 @@ class PublishHook(Hook):
         
         return sg_data
         
+    def _nuke_pre_publish_write_node_render(self, write_node, write_node_app, progress_cb):
+        """
+        Pre-publish render output for write node
+        """
+        errors = []
+        try:
+            # check to see if the write node path is currently locked:
+            if write_node_app.is_node_render_path_locked(write_node):
+                # renders for the write node can't be published - trying to publish 
+                # will result in an error in the publish hook!
+                errors.append("The render path is currently locked and does not match match the current Work Area.")
+            
+            progress_cb(10.0, "Finding rendered files")
+            
+            # get list of render files:
+            render_files = write_node_app.get_node_render_files(write_node)
+            if len(render_files) == 0:
+                is_valid = False
+                errors.append("No render files exist to be published!")
+            else:
+                # ensure that published files don't already exist
+        
+                # need the render template, publish template and tank type which are all 
+                # defined per node (profile) in the tk-nuke-writenode app
+                render_template = write_node_app.get_node_render_template(write_node)
+                publish_template = write_node_app.get_node_publish_template(write_node)                        
+                tank_type = write_node_app.get_node_tank_type(write_node)
+        
+                progress_cb(25.0, "Checking for existing files")
+                
+                # check files:
+                existing_files = []
+                for fi, rf in enumerate(render_files):
+                    
+                    progress_cb(25 + (75*(len(render_files)/(fi+1))))
+                    
+                    # construct the publish path:
+                    fields = render_template.get_fields(rf)
+                    fields["TankType"] = tank_type
+                    target_path = publish_template.apply_fields(fields)
+                
+                    if os.path.exists(target_path):
+                        existing_files.append(target_path)
+                        
+                if existing_files:
+                    # one or more published files already exist!
+                    msg = "Published render file '%s'" % existing_files[0]
+                    if len(existing_files) > 1:
+                        msg += " (+%d others)" % (len(existing_files)-1)
+                    msg += " already exists!"
+                    errors.append(msg)
+        except Exception, e:
+            errors.append("Unhandled exception: %s" % e)
 
+        return errors
+    
+    def _register_version(self,fields,frames_path):
+        """
+        Helper method to register publish using the 
+        specified publish info.
+        """
 
+        sg_version_name='v'+str(fields['version']).zfill(3)
+        
+        startTime=int(nuke.root()['first_frame'].value())
+        endTime=int(nuke.root()['last_frame'].value())
+        
+        args = {
+            "code": sg_version_name,
+            "project": self.parent.context.project,
+            "entity": self.parent.context.entity,
+            "sg_task": self.parent.context.task,
+            "created_by": self.parent.context.user,
+            "user": self.parent.context.user,
+            "sg_path_to_frames": frames_path,
+            "sg_first_frame": int(startTime),
+            "sg_last_frame": int(endTime),
+            "frame_count": int((endTime - startTime) + 1),
+            "frame_range": "%d-%d" % (startTime,endTime),
+        }
 
+        # register publish;
+        sg_data = self.parent.shotgun.create("Version", args)
 
-
-
+        return sg_data

@@ -142,9 +142,6 @@ class PrimaryPrePublishHook(Hook):
             
             #raise sgtk.TankError("Unable to perform pre-publish for invisible meshes %s" % listString)
          
-        #geo group
-        geogrp=cmds.group(empty=True,n='geo')
-         
         meshes=[]
         #process meshes
         for mesh in cmds.ls(type='mesh'):
@@ -183,10 +180,6 @@ class PrimaryPrePublishHook(Hook):
                 if not cmds.objExists(transform+'.asset'):
                     cmds.addAttr(transform,ln='asset',dt='string')
                 cmds.setAttr(transform+'.asset',AssetName,type='string')
-                
-                #add to group
-                if parent!=geogrp:
-                    cmds.parent(transform,geogrp) 
                     
         progress_cb(100)
           

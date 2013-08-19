@@ -140,7 +140,7 @@ paths:
 
     # The location of alembic cache
     cache_alembic:
-      definition: /{Episode}/{Shot}/cache/[{Asset}][.v{version}].abc
+      definition: /{Episode}/cache/{Shot}/{Step}/[{Asset}][.{filetag}].v{version}.abc
       root_name: renders
       
     cache_alembic_asset:
@@ -165,14 +165,14 @@ paths:
     light_setup_temp:
       definition: episodes/{Episode}/{Shot}/{Step}/work/SHOTGUN_SAVE_AS_PLEASE.ma
       root_name: work
-
+    
     #
     # Maya
     #
 
     # The location of ncache
     maya_nCache:
-      definition: /{Episode}/{Shot}/cache/nCache
+      definition: /{Episode}/cache/{Shot}/nCache
       root_name: renders
 
     # The location of WIP files
@@ -192,16 +192,21 @@ paths:
 
     # The location of maya renders
     maya_shot_render:
-      definition: /{Episode}/{Shot}/cg/v{version}/{name}.v{version}.{SEQ}.exr
+      definition: /{Episode}/cg/{Shot}/v{version}/{name}.v{version}.{SEQ}.exr
       root_name: renders
 
     maya_shot_render_area:
-      definition: /{Episode}/{Shot}/cg/v{version}
+      definition: /{Episode}/cg/{Shot}/v{version}
       root_name: renders
-
+          
+    # The location of Arnold Scene Source files
+    maya_ass_export:
+      definition: /{Episode}/cg/{Shot}/v{version}/ass/{name}.v{version}.{SEQ}.ass
+      root_name: renders
+  
     # The location of maya reviews
     maya_shot_review:
-      definition: /{Episode}/{Shot}/cg/review/{name}.[{filetag}.][v{version}].mov
+      definition: /{Episode}/review/{Shot}/{name}.[{filetag}.]v{version}.mov
       root_name: renders
 
     #
@@ -220,30 +225,30 @@ paths:
 
     # The location of published nuke script files
     nuke_shot_publish:
-      definition: episodes/{Episode}/{Shot}/{Step}/publish/{name}.[{filetag}.]v{version}.[{SEQ}.]nk
+      definition: episodes/{Episode}/{Shot}/{Step}/publish/{name}.[{filetag}.]v{version}.nk
       root_name: work
 
     # write node outputs
     nuke_shot_render_exr:
-      definition: /{Episode}/{Shot}/comp/v{version}/{Shot}_{name}.v{version}.{SEQ}.exr
+      definition: /{Episode}/comp/{Shot}/v{version}/{name}.v{version}.{SEQ}.exr
       root_name: renders
     nuke_shot_render_review_mov:
-      definition: /{Episode}/{Shot}/review/v{version}/{Shot}_{name}.v{version}.{iteration}.mov
+      definition: /{Episode}/review/{Shot}/{name}.v{version}.mov
       root_name: renders
     nuke_shot_render_exr_review_seq:
-      definition: /{Episode}/{Shot}/comp/v{version}/{Shot}_{name}.v{version}.{iteration}.{SEQ}.exr
+      definition: /{Episode}/comp/{Shot}/v{version}/{name}.v{version}.{iteration}.{SEQ}.exr
       root_name: renders
     nuke_shot_render_pub_exr:
-      definition: /{Episode}/{Shot}/comp/elements/v{version}/{Shot}_{name}.v{version}.{SEQ}.exr
+      definition: /{Episode}/comp/{Shot}/elements/v{version}/{name}.v{version}.{SEQ}.exr
       root_name: renders
       
     nuke_shot_render_area:
-      definition: /{Episode}/{Shot}/comp/v{version}
+      definition: /{Episode}/comp/{Shot}/v{version}
       root_name: renders
 
     # review output
     shot_quicktime_quick:
-      definition: /{Episode}/{Shot}/review/{Shot}_{name}_quick_{iteration}.mov
+      definition: /{Episode}/review/{Shot}/{Shot}_{name}_quick_{iteration}.mov
       root_name: renders
 
     #
