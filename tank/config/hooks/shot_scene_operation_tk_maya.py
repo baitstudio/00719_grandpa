@@ -253,7 +253,8 @@ class SceneOperation(Hook):
         
         if len(assets)>0:
             for asset in assets:
-                if asset != 'Grandpa':
+                print asset
+                if asset['assetName'] != 'Grandpa':
                     mu.referenceAsset(asset['path']['local_path_windows'])
         else:
             cmds.warning('Could not find any assets to reference! Please link the assets in shotgun.')
@@ -292,7 +293,7 @@ class SceneOperation(Hook):
             #ctx=self.parent.context
             maya_work=tk.templates['shot_work_area']        
             fields=ctx.as_template_fields(maya_work)
-            
+          
             
             low_plate=tk.templates['low_res_proxy_plate_path']
             plateDir=low_plate.parent.apply_fields(fields)
@@ -346,7 +347,7 @@ class SceneOperation(Hook):
         
         #Open Arnold Renders Settings template
         
-        arnoldSetup="M:/00719_grandpa/assets/Environments/arnoldTemplate/publish/arnoldTemplate.rend.v002.ma"
+        arnoldSetup="M:/00719_grandpa/assets/Environments/arnoldTemplate/publish/arnoldTemplate.rend.v003.ma"
         #print str(arnoldSetup)
         shutil.copyfile(arnoldSetup, dst) 
         
@@ -375,30 +376,17 @@ class SceneOperation(Hook):
         lightSetup=su.getLatestShotAssets(tk, ctx, publishedType='Maya Lighting')
         print lightSetup
         
-        shadowLayer = pm.PyNode('shadowLayer')
-        masterLayer = pm.PyNode('defaultRenderLayer')
+        shadowLayer = pm.PyNode('shadows')
+        beautyLayer = pm.PyNode('beauty')
+        workLayer = pm.PyNode('defaultRenderLayer')
         
         for asset in lightSetup: 
             print ('loading reference: ' + (asset['path']['local_path_windows']))      
             setNodes = mu.referenceAsset(asset['path']['local_path_windows'])
-            
-            
-            
-            shadowLayer.setCurrent()  
 
-            for node in setNodes:
-                #print ('node is: ' + node)
-                if pm.nodeType(node) == 'mesh':
-                    mesh = pm.PyNode(node)
-                    #print ('mesh is: ' + mesh)       
-                    mesh.aiSelfShadows.set(0)
-                    mesh.aiOpaque.set(0)   
-                    # NAME OF SHADOW CATCHER IS HARDCODED HERE FOR NOW#                    
-                    ShadowCatcherSG = 'ShadowCatcher_matSG'
-                    pm.sets(ShadowCatcherSG, e=True, forceElement=mesh)
 
-            masterLayer.setCurrent()  
-        
+        workLayer.setCurrent()
+            
         #referencing latest camera file 
         print ('getting latest cameras')
         camData=su.getLatestShotFile(tk, ctx, publishedType='Maya Camera')        
@@ -410,16 +398,43 @@ class SceneOperation(Hook):
                 print ('camera is: ' + cam['path']['local_path_windows'])
                 camNodes=mu.referenceAsset(cam['path']['local_path_windows'])
             
-            print ('connecting camera to projection')        
-            for node in camNodes:       
+            print ('connecting camera to projection')      
+             
+            for node in camNodes:      
                 if pm.nodeType(node) == 'camera':
                     cam=pm.PyNode(node)
                     print cam
                     projection = pm.PyNode('projection')
-                    cam.message >> projection.linkedCamera
+                    cam.message >> projection.linkedCamera                
+                    low_plate=tk.templates['low_res_proxy_plate_path']
+                    plateDir=low_plate.parent.apply_fields(fields)    
+                    #try for image planes---
+                    try:
+                        firstFile=os.listdir(plateDir)[0]           
+                        imagePath=plateDir+'/'+firstFile
+                        IP = pm.PyNode(mu.imagePlane(cam, imagePath))
+                        IP.depth.set(2000)
+                        IP.fit.set(0)
+                        IP.width.set(960)
+                        IP.height.set(540)
+                        IP.sizeY.set(0.836)
+                        IP.sizeX.set(1.485)
+                    except:
+                        print ('Backplate not found!!!')              
+                                                    
         except:
-            print ('camera not found!!!')
-        
+            print ('Camera Trouble!!!')
+              
+            low_plate=tk.templates['low_res_proxy_plate_path']
+            plateDir=low_plate.parent.apply_fields(fields)
+            
+            #try for image planes---
+            try:
+                firstFile=os.listdir(plateDir)[0]        
+                imagePath=plateDir+'/'+firstFile
+                mu.imagePlane(cam, imagePath)
+            except:
+                pass
                 
         #connect camera to projection
         
@@ -450,12 +465,13 @@ class SceneOperation(Hook):
         shotAssets=su.getLatestShotAssets(tk, ctx, publishedType='Maya Shaded Model') 
         print shotAssets
         
+        shotCaches=[] 
         shotCaches= su.getLatestShotFile(tk, ctx, publishedType='Alembic Animation') 
         print shotCaches
         
         abc_template=tk.templates['cache_alembic']
         
-        shotCaches=[]     
+            
         #for cache in shotCaches:
         try:
             input_path=shotCaches[0]['path']['local_path_windows']
@@ -467,25 +483,27 @@ class SceneOperation(Hook):
         except:
             print ('Cache file not found!!!')
         
+        importedCaches= []
         failedNodes= []
+        grp = pm.group( em=True, name='cache' )
         for asset in shotAssets:
             try:           
                 print ('loading reference for' + asset['assetName']) 
-                refNodes = mu.referenceAsset(asset['path']['local_path_windows'])
+                refNodes = mu.referenceAsset(asset['path']['local_path_windows'], namespace=(asset['assetName'] + 'shaded'))
                 #fields['Asset']=asset['assetName']
                 #abcFile = abc_template.apply_fields(fields)
-                #make temporary namespace
-                pm.namespace(add='temp')
-                pm.namespace(set='temp')
+                #make temporary namespace 
+                nspace = pm.namespace(add=asset['assetName'])
+                pm.namespace(set=nspace)
                 #import alembic cache for current asset
                 for cache in shotCaches:
                     if cache['name'] == asset['assetName']:
-                        grp = pm.group( em=True, name=asset['assetName'] )
                         print ('loading alembic cache for!: ' + cache['path']['local_path_windows'])
                         mu.alembicImport(cache['path']['local_path_windows'], 'parent', parent=grp)
+                        importedCaches.append(cache['path']['local_path_windows'])
                 print ('transfering shaders for' + asset['assetName'])
             except:
-                print ('asset wasn\'t resolved' + asset)
+                print ('asset wasn\'t resolved' + asset['assetName'])
             
             transformNodes = []
             for node in refNodes:
@@ -499,7 +517,7 @@ class SceneOperation(Hook):
                         shadingEngine = source.getShape().connections()
                         SG = str(shadingEngine[0].shortName())
                        
-                        target = pm.PyNode(source.swapNamespace('temp')).getShape()
+                        target = pm.PyNode(source.swapNamespace(nspace)).getShape()
                     
                         pm.sets(SG, e=True, forceElement=target)                       
                 except:
@@ -513,24 +531,23 @@ class SceneOperation(Hook):
             
             #clear the temp namespace  
             pm.namespace( set=':' )
-            pm.namespace(mv=('temp', ':'))
-            pm.namespace(rm='temp')
-        
-        
-        
+            #pm.namespace(mv=('temp', ':'))
+            #pm.namespace(rm='temp')       
+
         #copy objects from master layer to shadow layer
-        renderNodes = pm.editRenderLayerMembers(masterLayer, query=True )
+        renderNodes = pm.editRenderLayerMembers(workLayer, query=True )
         print
         try:
             pm.editRenderLayerMembers(shadowLayer, renderNodes)
+            pm.editRenderLayerMembers(beautyLayer, renderNodes)
         except:
             print 'couldn\' copy objects to shadow layer'
           
         #make sure we are in the Default render layer    
-        masterLayer.setCurrent() 
+        workLayer.setCurrent() 
         #set parameters on members 
         for node in renderNodes:
-            if  pm.nodeType(node) == 'transform' and pm.PyNode(node).hasAttr('asset'):
+            if  pm.nodeType(node) == 'transform' and pm.PyNode(node).hasAttr('asset'):            
                 mesh = pm.PyNode(node).getShape()
                 mesh.primaryVisibility.set(1)
                 mesh.aiSubdivType.set(1);
@@ -538,13 +555,42 @@ class SceneOperation(Hook):
             elif pm.nodeType(node) == 'transform':
                 try:
                     mesh = pm.PyNode(node).getShape()
-                    mesh.primaryVisibility.set(0)
+                    mesh.primaryVisibility.set(1)
+                    mesh.castsShadows.set(1)
                     mesh.aiSelfShadows.set(0)
                     mesh.aiOpaque.set(1)
+                    ShadowCatcherSG = 'ShadowCatcher_matSG'
+                    pm.sets(ShadowCatcherSG, e=True, forceElement=mesh)
                 except:
                     print ('This node is not a mesh: ' + node)
             else:
                 pass            
+        
+                #switch to Shadow render layer        
+        beautyLayer.setCurrent()    
+        # Apply layer overrides for shadows catchers and assets    
+        for node in renderNodes:
+            if  pm.nodeType(node) == 'transform' and pm.PyNode(node).hasAttr('asset'):            
+                mesh = pm.PyNode(node).getShape()
+                mesh.primaryVisibility.set(1)
+            elif pm.nodeType(node) == 'transform':
+                try:
+                    mesh = pm.PyNode(node).getShape()
+                    mel.eval('editRenderLayerAdjustment "%s.primaryVisibility";' % mesh)
+                    mesh.primaryVisibility.set(0)
+                    mel.eval('editRenderLayerAdjustment "%s.castsShadows";' % mesh)
+                    mesh.castsShadows.set(1)
+                    mel.eval('editRenderLayerAdjustment "%s.aiSelfShadows";' % mesh)
+                    mesh.aiSelfShadows.set(0)
+                    mel.eval('editRenderLayerAdjustment "%s.aiOpaque";' % mesh)
+                    mesh.aiOpaque.set(1)   
+                    # NAME OF SHADOW CATCHER IS HARDCODED HERE FOR NOW#                    
+                    ProjectionSG = 'projection_matSG'
+                    pm.sets(ProjectionSG, e=True, forceElement=mesh)
+                except:
+                    print ('This node is not a mesh: ' + node)
+            else:
+                pass
                 
         #switch to Shadow render layer        
         shadowLayer.setCurrent()    
@@ -559,41 +605,86 @@ class SceneOperation(Hook):
                     mesh = pm.PyNode(node).getShape()
                     mel.eval('editRenderLayerAdjustment "%s.primaryVisibility";' % mesh)
                     mesh.primaryVisibility.set(1)
-                    mesh.castShadows(0)
+                    mel.eval('editRenderLayerAdjustment "%s.castsShadows";' % mesh)
+                    mesh.castsShadows.set(0)
+                    mel.eval('editRenderLayerAdjustment "%s.aiSelfShadows";' % mesh)
+                    mesh.aiSelfShadows.set(0)
+                    mel.eval('editRenderLayerAdjustment "%s.aiOpaque";' % mesh)
+                    mesh.aiOpaque.set(0)   
+                    # NAME OF SHADOW CATCHER IS HARDCODED HERE FOR NOW#                    
+                    ShadowCatcherSG = 'ShadowCatcher_matSG'
+                    pm.sets(ShadowCatcherSG, e=True, forceElement=mesh)
                 except:
                     print ('This node is not a mesh: ' + node)
             else:
                 pass
-                #mesh.aiSelfShadows.set(0)
-                #mesh.aiOpaque.set(0)
+
+        workLayer.setCurrent() 
+                
+        newgrp= pm.group( em=True, name='cacheExtras' )
+        
+        for cache in shotCaches:
+            print importedCaches
+            if not cache['path']['local_path_windows'] in importedCaches:
+                print ('processing ' + cache['path']['local_path_windows'])
+                abcImport = mu.alembicImport(cache['path']['local_path_windows'], 'parent', parent=newgrp)   
+                abcNodes = pm.ls(abcImport)            
+                for abcNode in abcNodes:
+                    abcConnections = pm.PyNode(abcNode).listConnections(connections=True, skipConversionNodes=True)
+                    targetGrp = []
+                    for connection in abcConnections:
+                        if connection[1].hasAttr('asset'):
+                            targetGrp = pm.ls((connection[1].getAttr('asset') + ':*'), type='transform')
+                            break
+                    
+                    for connection in abcConnections:
+                        print connection
+                        sourceConnection = connection[0]
+                        if connection[1].hasAttr('asset'):
+                            sourceNode = connection[1].getShape()
+                            source = connection[1]
+                            print sourceNode    
+                            for target in targetGrp:
+                                targetNode=target.getShape()
+                                if target.stripNamespace() == source.stripNamespace():
+                                        print ('source: ' + sourceNode)
+                                        print ('target: ' + targetNode) 
+                                        sourceConnection // sourceNode.inMesh    
+                                        sourceConnection >> targetNode.inMesh   
+                    #pm.delete(newgrp)           
         
         simCaches= su.getLatestShotFile(tk, ctx, publishedType='Alembic Simulation') 
-        
+              
+        simgrp= pm.group( em=True, name='cacheSim' )
         for cache in simCaches:
-            abcImport = mu.alembicImport(cache['path']['local_path_windows'], 'parent', parent=grp)
+            abcImport = mu.alembicImport(cache['path']['local_path_windows'], 'parent', parent=simgrp)
     
             abcNodes = pm.ls(abcImport) 
             
             for abcNode in abcNodes:
-                print ('alembic node: ' + abcNode)
-                abcChildren = pm.PyNode(abcNode).listConnections()
-                for node in abcChildren:
-                    try:
-                        if pm.PyNode(node).hasAttr('sim'):
-                            source = pm.PyNode(node).getShape()
-                            targetGrp = pm.ls(pm.PyNode(node).getAttr('asset'))
-                            for object in targetGrp[0].listRelatives():
-                                target = object.getShape()
-                                if target.split('|')[-1] == source.split('|')[-1]:
-                                    print ('source' + source)
-                                    print ('target' + target)  
-                                    abcNode.outPolyMesh[1] // source.inMesh    
-                                    abcNode.outPolyMesh[1] >> target.inMesh   
-                        #pm.delete(node)
-                    except:
-                        pass
-
-        masterLayer.setCurrent() 
+                abcConnections = pm.PyNode(abcNode).listConnections(connections=True, skipConversionNodes=True)
+                targetGrp = []
+                for connection in abcConnections:
+                    if connection[1].hasAttr('asset'):
+                        targetGrp = pm.ls((connection[1].getAttr('asset') + ':*'), type='transform')
+                        break
+                
+                for connection in abcConnections:
+                    sourceConnection = connection[0]
+                    if connection[1].hasAttr('sim'):
+                        sourceNode = connection[1].getShape()
+                        source = connection[1]
+                        print sourceNode    
+                        for target in targetGrp:
+                            targetNode=target.getShape()
+                            if target.stripNamespace() == source.stripNamespace():
+                                print sourceNode
+                                print targetNode
+                                sourceConnection // sourceNode.inMesh    
+                                sourceConnection >> targetNode.inMesh   
+        pm.delete(simgrp)
+                            
+        workLayer.setCurrent() 
         
         pm.confirmDialog( title='Report', message=('New scene was created. These objects couldn\'t have shaders applied: )' + str(failedNodes)), button=['Ok', 'No'], defaultButton='Yes', cancelButton='No', dismissString='No' )
         

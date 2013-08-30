@@ -70,20 +70,30 @@ class ScanSceneHook(Hook):
         assets={}
         nodes=[]
         
-        for node in pm.ls(type='transform'):        
-            if pm.PyNode(node).hasAttr('asset'):            
-                assetName=cmds.getAttr(node+'.asset')
-                print assetName
-                assets[assetName]=[]            
-                nodes.append(node)
-       
-        if len(nodes)>0:
-            for node in nodes:               
-                assetName=cmds.getAttr(node+'.asset')
-                assets[assetName].append(node)           
-               
-        for asset in assets:
-            items.append({"type":"asset", "name":asset, "other_params": assets[asset] })
+        if ctx.step['name']!='Light':
+            for node in pm.ls(type='transform'):        
+                if pm.PyNode(node).hasAttr('asset'):            
+                    assetName=cmds.getAttr(node+'.asset')
+                    print assetName
+                    assets[assetName]=[]            
+                    nodes.append(node)
+                if pm.PyNode(node).hasAttr('abcStep'):            
+                    assetName='extras'
+                    print assetName
+                    assets[assetName]=[]            
+                    nodes.append(node)
+            
+            if len(nodes)>0:
+                for node in nodes:  
+                    assetName=cmds.getAttr(node+'.asset')
+                    assets[assetName].append(node)  
+                    if pm.PyNode(node).hasAttr('abcStep'):  
+                        assetName='extras'
+                        assets[assetName].append(node)        
+                            
+         
+            for asset in assets:
+                items.append({"type":"asset", "name":asset, "other_params": assets[asset] })
         
         #create Preview items   
         for node in pm.ls(type='camera'):  

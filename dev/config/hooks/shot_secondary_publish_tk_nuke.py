@@ -104,6 +104,7 @@ class PublishHook(Hook):
         # this is needed as input into the review creation code...
         render_publishes = {}
         
+        outputs=[]
         # process tasks:
         for task in tasks:
             
@@ -116,6 +117,7 @@ class PublishHook(Hook):
             # the output name is 'render' or 'quicktime' in our std setup.
             output_name = task["output"]["name"]
             
+            outputs.append(output_name)
             # each publish task is connected to a nuke write node
             # this value was populated via the scan scene hook
             write_node = task["item"].get("other_params", dict()).get("node")
@@ -246,6 +248,19 @@ class PublishHook(Hook):
                 results.append({"task":task, "errors":errors})
 
             progress_cb(100)
+
+        #updating shotgun status
+        print 'updating shotgun status'
+        
+        taskId=self.parent.context.task['id']
+        sg=self.parent.shotgun
+        
+        if "render" in output:
+            data = {'sg_status_list':'farm'}
+        else:
+            data = {'sg_status_list':'cmpt' }
+            
+        sg.update("Task",taskId,data)
 
         return results
     

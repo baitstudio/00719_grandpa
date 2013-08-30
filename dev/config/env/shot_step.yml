@@ -8,8 +8,8 @@ engines:
         location: {name: bait_app, path: 'K:/Tank/00719_grandpa/dev/install/apps/bait_app',
           type: dev}
       tk-maya-breakdown:
-        hook_multi_update: default
-        hook_scan_scene: default
+        hook_multi_update: maya_breakdown_update
+        hook_scan_scene: maya_breakdown_scan_scene
         location: {name: tk-maya-breakdown, type: app_store, version: v0.2.11}
       tk-multi-about:
         location: {name: tk-multi-about, type: app_store, version: v0.1.10}
@@ -17,25 +17,26 @@ engines:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: default
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.12}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.13}
         menu_name: Load Assets...
         publish_filters: []
         sg_entity_types:
           Asset: []
         single_select: true
-        tank_types: [Maya Model, Maya Scene]
+        tank_types: [Maya Model, Maya Shaded Model, Maya Rig]
         title_name: Add items to your Scene
       tk-multi-loader-2:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: default
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.12}
-        menu_name: Load Shots...
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.13}
+        menu_name: Load Shot Publishes...
         publish_filters: []
         sg_entity_types:
           Shot: []
         single_select: true
-        tank_types: [Maya Camera, Maya Anim, Maya Sim, Maya Lighting, Maya Scene]
+        tank_types: [Maya Camera, Maya Anim, Maya Sim, Maya Lighting, Maya Scene,
+          Alembic Animation, Alembic Simulation]
         title_name: Add items to your Scene
       tk-multi-publish-shot:
         display_name: Publish Shot
@@ -78,9 +79,9 @@ engines:
         enable_create_tasks: true
         launch_at_startup: false
         location: {name: tk-multi-setcontext, type: app_store, version: v0.2.7}
-        sg_entity_types: [Shot, Asset]
+        sg_entity_types: [Shot]
       tk-multi-setframerange:
-        location: {name: tk-multi-setframerange, type: app_store, version: v0.1.5}
+        location: {name: tk-multi-setframerange, type: app_store, version: v0.1.7}
         sg_in_frame_field: sg_cut_in
         sg_out_frame_field: sg_cut_out
       tk-multi-snapshot:
@@ -91,16 +92,22 @@ engines:
         template_snapshot: maya_shot_snapshot
         template_work: maya_shot_work
       tk-multi-workfiles:
+        file_extensions: []
         hook_copy_file: default
         hook_scene_operation: shot_scene_operation_tk_maya
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.6}
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.19}
+        saveas_default_name: scene
+        saveas_prefer_version_up: false
+        sg_entity_type_filters:
+          Shot:
+          - [sg_status_list, is, ip]
         sg_entity_types: [Shot, Asset]
         template_publish: maya_shot_publish
         template_publish_area: shot_publish_area
         template_work: maya_shot_work
         template_work_area: shot_work_area
     debug_logging: false
-    location: {name: tk-maya, type: app_store, version: v0.3.5}
+    location: {name: tk-maya, type: app_store, version: v0.3.6}
     menu_favourites:
     - {app_instance: tk-multi-workfiles, name: Shotgun File Manager...}
     - {app_instance: tk-multi-snapshot, name: Snapshot...}
@@ -116,7 +123,7 @@ engines:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: default
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.12}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.13}
         menu_name: Load...
         publish_filters: []
         sg_entity_types:
@@ -142,14 +149,10 @@ engines:
         primary_scene_item_type: work_file
         primary_tank_type: Nuke Script
         secondary_outputs:
-        - {description: Publish rendered output,display_group: Publish,display_name: Publish Renders,
-          icon: icons/publish_nuke_writenode.png, name: render,publish_template: null,
-          required: false, scene_item_type: write_node, selected: false,
-          tank_type: Rendered Image}
-        #- {description: Render locally, display_group: Render, display_name: Render
-        #    Local, icon: icons/publish_nuke_writenode.png, name: render_local, publish_template: null,
-        #  required: false, scene_item_type: write_node, selected: false, tank_type: Rendered
-        #    Image}
+        - {description: Publish rendered output, display_group: Publish, display_name: Publish
+            Renders, icon: icons/publish_nuke_writenode.png, name: render, publish_template: null,
+          required: false, scene_item_type: write_node, selected: false, tank_type: Rendered
+            Image}
         - {description: Publish and render on the farm, display_group: Render, display_name: Render
             Network, icon: icons/publish_nuke_writenode.png, name: render_network,
           publish_template: null, required: false, scene_item_type: write_node, selected: false,
@@ -167,7 +170,7 @@ engines:
         version_number_padding: 3
       tk-multi-screeningroom: '@launch_screeningroom'
       tk-multi-setframerange:
-        location: {name: tk-multi-setframerange, type: app_store, version: v0.1.5}
+        location: {name: tk-multi-setframerange, type: app_store, version: v0.1.7}
         sg_in_frame_field: sg_cut_in
         sg_out_frame_field: sg_cut_out
       tk-multi-snapshot:
@@ -178,10 +181,16 @@ engines:
         template_snapshot: nuke_shot_snapshot
         template_work: nuke_shot_work
       tk-multi-workfiles:
+        file_extensions: []
         hook_copy_file: default
         hook_scene_operation: default
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.6}
-        sg_entity_types: [Shot, Asset]
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.19}
+        saveas_default_name: scene
+        saveas_prefer_version_up: false
+        sg_entity_type_filters:
+          Shot:
+          - [sg_status_list, is, ip]
+        sg_entity_types: [Shot]
         template_publish: nuke_shot_publish
         template_publish_area: shot_publish_area
         template_work: nuke_shot_work
@@ -193,7 +202,7 @@ engines:
       tk-nuke-quickdailies:
         current_scene_template: nuke_shot_work
         height: 768
-        location: {name: tk-nuke-quickdailies, type: app_store, version: v0.1.7}
+        location: {name: tk-nuke-quickdailies, type: app_store, version: v0.1.8}
         movie_template: shot_quicktime_quick
         post_hooks: [snapshot_history_post_quickdaily]
         sg_version_name_template: nuke_quick_shot_version_name
@@ -224,7 +233,7 @@ engines:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: default
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.12}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.13}
         menu_name: Load Image...
         publish_filters: []
         sg_entity_types:

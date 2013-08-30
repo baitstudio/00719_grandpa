@@ -51,9 +51,13 @@ engines:
         template_snapshot: hiero_project_snapshot
         template_work: hiero_project_work
       tk-multi-workfiles:
+        file_extensions: []
         hook_copy_file: default
         hook_scene_operation: default
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.6}
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.19}
+        saveas_default_name: scene
+        saveas_prefer_version_up: false
+        sg_entity_type_filters: {}
         sg_entity_types: []
         template_publish: hiero_project_publish
         template_publish_area: hiero_project_publish_area

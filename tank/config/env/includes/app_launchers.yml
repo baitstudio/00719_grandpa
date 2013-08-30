@@ -6,7 +6,7 @@ launch_hiero:
   hook_before_app_launch: default
   linux_args: ''
   linux_path: '@hiero_linux'
-  location: {name: tk-multi-launchapp, type: app_store, version: v0.2.12}
+  location: {name: tk-multi-launchapp, type: app_store, version: v0.2.13}
   mac_args: ''
   mac_path: '@hiero_mac'
   menu_name: Launch Hiero
@@ -19,7 +19,7 @@ launch_maya:
   hook_before_app_launch: default
   linux_args: ''
   linux_path: '@maya_linux'
-  location: {name: tk-multi-launchapp, type: app_store, version: v0.2.12}
+  location: {name: tk-multi-launchapp, type: app_store, version: v0.2.13}
   mac_args: ''
   mac_path: '@maya_mac'
   menu_name: Launch Maya
@@ -32,7 +32,7 @@ launch_nuke:
   hook_before_app_launch: before_app_launch
   linux_args: ''
   linux_path: '@nuke_linux'
-  location: {name: tk-multi-launchapp, type: app_store, version: v0.2.12}
+  location: {name: tk-multi-launchapp, type: app_store, version: v0.2.13}
   mac_args: ''
   mac_path: '@nuke_mac'
   menu_name: Launch Nuke
@@ -45,11 +45,11 @@ launch_nukeX:
   hook_before_app_launch: default
   linux_args: ''
   linux_path: '@nuke_linux'
-  location: {name: tk-multi-launchapp, type: app_store, version: v0.2.12}
+  location: {name: tk-multi-launchapp, type: app_store, version: v0.2.13}
   mac_args: ''
   mac_path: '@nuke_mac'
   menu_name: Launch NukeX
-  windows_args: '--nukex'
+  windows_args: --nukex
   windows_path: '@nuke_windows'
 launch_photoshop:
   engine: tk-photoshop
@@ -58,7 +58,7 @@ launch_photoshop:
   hook_before_app_launch: default
   linux_args: ''
   linux_path: ''
-  location: {name: tk-multi-launchapp, type: app_store, version: v0.2.12}
+  location: {name: tk-multi-launchapp, type: app_store, version: v0.2.13}
   mac_args: ''
   mac_path: '@photoshop_mac'
   menu_name: Launch Photoshop

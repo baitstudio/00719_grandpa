@@ -201,7 +201,11 @@ paths:
           
     # The location of Arnold Scene Source files
     maya_ass_export:
-      definition: /{Episode}/cg/{Shot}/v{version}/ass/{name}.v{version}.{SEQ}.ass
+      definition: /{Episode}/cg/{Shot}/v{version}/ass/{name}.[{filetag}.]v{version}.{SEQ}.ass
+      root_name: renders
+     
+    maya_ass_export_area:
+      definition: /{Episode}/cg/{Shot}/v{version}/ass
       root_name: renders
   
     # The location of maya reviews

@@ -121,8 +121,7 @@ class PublishHook(Hook):
                 publishCheck=False
                 
                 try:
-                    self._export_ass(item, output, work_template, primary_publish_path, 
-                                            sg_task, comment, thumbnail_path, progress_cb)
+                    self._export_ass()
                         
                     publishCheck=True
                 except Exception, e:
@@ -151,13 +150,18 @@ class PublishHook(Hook):
         taskId=self.parent.context.task['id']
         sg=self.parent.shotgun
         
-        data = {'sg_status_list':'cmpt' }
-        
+        if self.parent.context.step['name'] == 'Light':
+            data = {'sg_status_list':'farm' }
+        else:
+            data = {'sg_status_list':'cmpt' }
+            
         sg.update("Task",taskId,data)
         
         return results
     
-    def _export_ass(self, item, output, work_template, primary_publish_path, sg_task, comment, thumbnail_path, progress_cb):
+    def _export_ass(self):
+        
+        import mtoa.cmds.arnoldRender as ar
         
         filePath=cmds.file(q=True,sn=True)
         
@@ -169,75 +173,28 @@ class PublishHook(Hook):
         shot_temp=self.parent.sgtk.templates["maya_shot_work"]
         shotgunFields=shot_temp.get_fields(filePath)
         
-        #getting output path - hardcoded replace of sequence string---
-        area_temp=self.parent.sgtk.templates['maya_ass_export']
-        path=area_temp.apply_fields(shotgunFields).replace('\\','/').replace('.%05d','')
+        #getting output path
+        area_temp=self.parent.sgtk.templates['maya_ass_export_area']
+        path=area_temp.apply_fields(shotgunFields).replace('\\','/')
+        
+        #setting ass export path
+        cmds.workspace(fileRule = ['ASS', path])
         
         #account for renderlayers
-        renderlayersData={}
         for layer in cmds.ls(type='renderLayer'):
             
             #discarding referenced layers
             if ':' not in layer:
                 
-                print 'exporting ass for %s' % layer
-            
-                #collecting data
-                data={}
-                data['renderable']=cmds.getAttr(layer+'.renderable')
-                
                 #checking whether layer needs to be rendered
                 if cmds.getAttr(layer+'.renderable')==1:
                     
-                    #special case for masterlayer
-                    if layer=='defaultRenderLayer':
-                        
-                        pathLayer='masterLayer'
-                    else:
-                        pathLayer=layer
+                    cmds.editRenderLayerGlobals( currentRenderLayer=layer )
                     
-                    #hardcoded replace of name string---
-                    p=path.replace(shotgunFields['name'],'%s_%s' % (pathLayer,shotgunFields['name']))
-                    
-                    data['path']=p
-                else:
-                    data['path']=''
-                
-                #storing data
-                renderlayersData[layer]=data
-        
-        #getting renderable camera
-        cams=cmds.ls(type='camera')
-        
-        for cam in cams:
-            
-            if cmds.getAttr(cam+'.renderable'):
-                
-                camera=cam
-        
-        #exporting ass files
-        for layer in renderlayersData:
-            
-            #set renderlayer current
-            cmds.editRenderLayerGlobals( currentRenderLayer=layer )
-            
-            #deactivate all other layers
-            for l in renderlayersData:
-                if not l==layer:
-                    cmds.setAttr(l+'.renderable',0)
-            
-            #export ass
-            cmd='arnoldExportAss -f "%s" -endFrame %s -mask 255 -lightLinks 1 -frameStep 1.0 -startFrame %s -shadowLinks 1 -cam %s;' % (renderlayersData[layer]['path'],
-                                                                                                                                        endFrame,
-                                                                                                                                        startFrame,camera)
-            try:
-                mel.eval(cmd)
-            except Exception, e:
-                raise TankError("Failed to export Ass files: %s" % e)
-            
-            #reset renderlayers
-            for l in renderlayersData:
-                cmds.setAttr(l+'.renderable',renderlayersData[l]['renderable'])
+                    try:
+                        ar.arnoldBatchRender('')
+                    except Exception, e:
+                        raise TankError("Failed to export Ass files: %s" % e)
     
     def _publish_render(self, item, output, work_template, primary_publish_path, sg_task, comment, thumbnail_path, progress_cb):
         
@@ -270,8 +227,6 @@ class PublishHook(Hook):
             
             #discarding referenced layers
             if ':' not in layer:
-                
-                print 'submitting render for %s' % layer
             
                 #checking whether layer needs to be rendered
                 if cmds.getAttr(layer+'.renderable')==1:
@@ -281,7 +236,7 @@ class PublishHook(Hook):
                         layer='masterLayer'
                     
                     #hardcoded replace of name string---
-                    p=inputFilepath.replace(shotgunFields['name'],'%s_%s' % (layer,shotgunFields['name']))
+                    p=inputFilepath.replace('/ass/','/ass/%s/' % layer)
                     
                     inputFiles.append(p)
         
@@ -352,8 +307,15 @@ class PublishHook(Hook):
             
             count=inputFiles.index(f)
             
+            #generate jobname
+            basename='.'.join(os.path.basename(f).split('.')[0:-2])
+            layer=f.split('/')[-2]
+            
+            jobname=basename+'.'+layer
+            
+            #execute deadline submittal
             try:
-                cdu.submit('arnold', os.path.basename(f), start, end, f, outputPath,[outputFiles[count]], pluginArgs, submitArgs,
+                cdu.submit('arnold', jobname, start, end, f, outputPath,[outputFiles[count]], pluginArgs, submitArgs,
                            shotgunContext=shotgunContext, shotgunFields=shotgunFields,shotgunUser=shotgunUser,mayaGUI=True)
             except Exception, e:
                 raise TankError("Failed to submit arnold to deadline: %s" % e)
@@ -408,31 +370,53 @@ class PublishHook(Hook):
         # create the publish path by applying the fields 
         # with the publish template:
         publish_path = publish_template.apply_fields(fields)
-        print publish_path
-       
-        # node loop 
-        nodesString=''   
-        print item["other_params"] 
-        for node in item["other_params"]:
-            nodesString+='-root '+node+' '
-        print nodesString
         
-             
+        
         #export with assets attribute
-        attrstring='-a asset -a sim'
+        attrstring='-a asset -a sim -a abcStep'
         
         # build and execute the Alembic export command for this item:
         frame_start = int(cmds.playbackOptions(q=True, min=True))
         frame_end = int(cmds.playbackOptions(q=True, max=True))
+        
+        sampling=1.0
+        
+        nodesString='' 
+        
+        if group_name != 'extras':     
+            # node loop   
+            for node in item["other_params"]:
+                nodesString+='-root '+node+' '
+        elif group_name == 'extras':                  
+            for node in item["other_params"]:
+                #if node.hasAttr('abcStep'):
+                print node
+                nodesString+='-root '+node+' '
+                #stepsize= node.abcStep.get()
+                #fields["Asset"] = node.stripNamespace() 
+                fields["Asset"] = 'extras'  
+                publish_path = publish_template.apply_fields(fields) 
+                sampling = node.abcStep.get()
+        
+        print ('exporting: ' + nodesString)            
+        '''
+        try:
+            print 'exporting subframed ABC'
+            pm.AbcExport(j='-step %s -frameRange %s %s %s -stripNamespaces -uvWrite -worldSpace -writeVisibility %s-file %s' % (sampling,frame_start,frame_end,attrstring,subframeNodes,subPath))
+        except Exception, e:
+            raise TankError("Failed to export Alembic Cache: %s" % e)
+        '''
         #abc_export_cmd = "AbcExport -j \"-frameRange %s %s %s -stripNamespaces -uvWrite -worldSpace -wholeFrameGeo -writeVisibility %s-file %s\"" % (frame_start,frame_end,attrstring,nodesString,publish_path)
        
         try:
             #self.parent.log_debug("Executing command: %s" % abc_export_cmd)
             #mel.eval(abc_export_cmd)
             print 'exporting ABC'
-            pm.AbcExport(j='-frameRange %s %s %s -stripNamespaces -uvWrite -worldSpace -wholeFrameGeo -writeVisibility %s-file %s' % (frame_start,frame_end,attrstring,nodesString,publish_path))
+            pm.AbcExport(j='-step %s -frameRange %s %s %s -stripNamespaces -uvWrite -worldSpace -writeVisibility %s-file %s' % (sampling, frame_start,frame_end,attrstring,nodesString,publish_path))
         except Exception, e:
             raise TankError("Failed to export Alembic Cache: %s" % e)
+        
+
 
         # Finally, register this publish with Shotgun
         self._register_publish(publish_path, 
@@ -530,6 +514,7 @@ class PublishHook(Hook):
             "sg_last_frame": int(endTime),
             "frame_count": int((endTime - startTime) + 1),
             "frame_range": "%d-%d" % (startTime,endTime),
+            "sg_status_list": "rev"
         }
 
         # register publish;
@@ -537,6 +522,6 @@ class PublishHook(Hook):
         
         #self.parent.shotgun.upload_thumbnail("Version", sg_data["id"], thumbnail)
         
-        self.parent.shotgun.upload("Version",sg_data['id'],mov,field_name='sg_uploaded_movie')
+        #self.parent.shotgun.upload("Version",sg_data['id'],mov,field_name='sg_uploaded_movie')
 
         return sg_data

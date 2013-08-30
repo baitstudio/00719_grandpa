@@ -10,16 +10,20 @@ engines:
         location: {name: tk-multi-about, type: app_store, version: v0.1.10}
       tk-multi-screeningroom: '@launch_screeningroom'
       tk-multi-workfiles:
+        file_extensions: []
         hook_copy_file: default
         hook_scene_operation: default
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.6}
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.19}
+        saveas_default_name: scene
+        saveas_prefer_version_up: false
+        sg_entity_type_filters: {}
         sg_entity_types: [Shot, Asset]
         template_publish: null
         template_publish_area: null
         template_work: null
         template_work_area: null
     debug_logging: false
-    location: {name: tk-maya, type: app_store, version: v0.3.5}
+    location: {name: tk-maya, type: app_store, version: v0.3.6}
     menu_favourites:
     - {app_instance: tk-multi-workfiles, name: Shotgun File Manager...}
     template_project: null
@@ -30,9 +34,13 @@ engines:
         location: {name: tk-multi-about, type: app_store, version: v0.1.10}
       tk-multi-screeningroom: '@launch_screeningroom'
       tk-multi-workfiles:
+        file_extensions: []
         hook_copy_file: default
         hook_scene_operation: default
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.6}
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.19}
+        saveas_default_name: scene
+        saveas_prefer_version_up: false
+        sg_entity_type_filters: {}
         sg_entity_types: [Shot, Asset]
         template_publish: null
         template_publish_area: null
@@ -49,9 +57,13 @@ engines:
         location: {name: tk-multi-about, type: app_store, version: v0.1.10}
       tk-multi-screeningroom: '@launch_screeningroom'
       tk-multi-workfiles:
+        file_extensions: []
         hook_copy_file: default
         hook_scene_operation: default
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.6}
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.19}
+        saveas_default_name: scene
+        saveas_prefer_version_up: false
+        sg_entity_type_filters: {}
         sg_entity_types: [Shot, Asset]
         template_publish: null
         template_publish_area: null
