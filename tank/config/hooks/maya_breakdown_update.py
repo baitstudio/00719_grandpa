@@ -8,6 +8,8 @@ hook can detect, a piece of upgrade logic should be provided in this file.
 
 """
 
+import os
+
 from tank import Hook
 import maya.cmds as cmds
 import pymel.core as pm
@@ -24,15 +26,50 @@ class MayaBreakdownUpdate(Hook):
             node = i["node_name"]
             node_type = i["node_type"]
             new_path = i["path"]
-        
+            
             engine = self.parent.engine
             engine.log_debug("%s: Updating reference to version %s" % (node, new_path))
-    
+            
             if node_type == "reference":
-                # maya reference            
-                rn = pm.system.FileReference(node)
-                rn.replaceWith(new_path)
                 
+                #hardcoded finding of asset name---
+                asset=os.path.basename(new_path).split('.')[0]
+                
+                #special case for main_outfit,captain_dumbletwitt
+                specialAssets=['main_outfit','captain_dumbletwitt','ostrich']
+                if asset in specialAssets:
+                    
+                    latestFile=os.path.basename(new_path)
+                    
+                    filepath=cmds.referenceQuery( node, filename=True)
+                    filename=os.path.basename(filepath)
+                    
+                    #saving file
+                    cmds.file(save=True)
+                    
+                    #editing ma file
+                    currentFile=cmds.file(q=True,sn=True)
+                    
+                    cmds.file(newFile=True)
+                    
+                    f=open(currentFile,'r')
+                    fdata=f.read()
+                    fdata=fdata.replace(filename,latestFile)
+                    f.close()
+                    
+                    f=open(currentFile,'w')
+                    f.write(fdata)
+                    f.close()
+                    
+                    #reloading the file
+                    cmds.file(currentFile,open=True)
+                
+                else:
+                    
+                    # maya reference            
+                    rn = pm.system.FileReference(node)
+                    rn.replaceWith(new_path)
+            
             elif node_type == "file":
                 # file texture node
                 file_name = cmds.getAttr("%s.fileTextureName" % node)
@@ -70,4 +107,3 @@ class MayaBreakdownUpdate(Hook):
                 
             else:
                 raise Exception("Unknown node type %s" % node_type)
-

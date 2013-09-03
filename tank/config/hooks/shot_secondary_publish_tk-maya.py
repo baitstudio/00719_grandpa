@@ -381,7 +381,7 @@ class PublishHook(Hook):
         
         sampling=1.0
         
-        nodesString='' 
+        nodesString=''
         
         if group_name != 'extras':     
             # node loop   

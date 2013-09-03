@@ -48,7 +48,7 @@ engines:
         hook_secondary_pre_publish: shot_secondary_pre_publish_tk-maya
         hook_secondary_publish: shot_secondary_publish_tk-maya
         hook_thumbnail: default
-        location: {name: tk-multi-publish, type: app_store, version: v0.3.10}
+        location: {name: tk-multi-publish, type: app_store, version: v0.3.11}
         primary_description: Publish and version up the current Maya scene
         primary_display_name: Maya Publish
         primary_icon: icons/publish_maya_main.png
@@ -88,14 +88,16 @@ engines:
         hook_copy_file: default
         hook_scene_operation: default
         hook_thumbnail: default
-        location: {name: tk-multi-snapshot, type: app_store, version: v0.2.5}
+        location: {name: tk-multi-snapshot, type: app_store, version: v0.2.7}
         template_snapshot: maya_shot_snapshot
         template_work: maya_shot_work
       tk-multi-workfiles:
+        allow_task_creation: true
         file_extensions: []
         hook_copy_file: default
         hook_scene_operation: shot_scene_operation_tk_maya
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.19}
+        launch_change_work_area_at_startup: false
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.21}
         saveas_default_name: scene
         saveas_prefer_version_up: false
         sg_entity_type_filters:
@@ -141,7 +143,7 @@ engines:
         hook_secondary_pre_publish: shot_secondary_pre_publish_tk_nuke
         hook_secondary_publish: shot_secondary_publish_tk_nuke
         hook_thumbnail: default
-        location: {name: tk-multi-publish, type: app_store, version: v0.3.10}
+        location: {name: tk-multi-publish, type: app_store, version: v0.3.11}
         primary_description: Publishes and versions up the current Nuke script.
         primary_display_name: Nuke Publish
         primary_icon: icons/publish_nuke_main.png
@@ -177,14 +179,16 @@ engines:
         hook_copy_file: default
         hook_scene_operation: default
         hook_thumbnail: default
-        location: {name: tk-multi-snapshot, type: app_store, version: v0.2.5}
+        location: {name: tk-multi-snapshot, type: app_store, version: v0.2.7}
         template_snapshot: nuke_shot_snapshot
         template_work: nuke_shot_work
       tk-multi-workfiles:
+        allow_task_creation: true
         file_extensions: []
         hook_copy_file: default
-        hook_scene_operation: default
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.19}
+        hook_scene_operation: shot_scene_operation_tk_nuke
+        launch_change_work_area_at_startup: false
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.21}
         saveas_default_name: scene
         saveas_prefer_version_up: false
         sg_entity_type_filters:
