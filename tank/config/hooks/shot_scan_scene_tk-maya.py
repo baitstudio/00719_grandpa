@@ -90,8 +90,7 @@ class ScanSceneHook(Hook):
                     if pm.PyNode(node).hasAttr('abcStep'):  
                         assetName='extras'
                         assets[assetName].append(node)        
-                            
-         
+                                 
             for asset in assets:
                 items.append({"type":"asset", "name":asset, "other_params": assets[asset] })
         

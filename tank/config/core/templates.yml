@@ -277,6 +277,11 @@ paths:
       definition: 'footage/episodes/{Episode}/{Shot}/proxy_plates/HALF_RES/{Shot}.[v{version}.]{SEQ}.jpg'
       root_name: resources
     
+    # The location of low resolution plates  
+    quicktime_proxy_plate_path:
+      definition: 'footage/episodes/{Episode}/{Shot}/proxy_plates/HALF_RES_MOV/{Shot}.[v{version}].mov'
+      root_name: resources
+    
     # The location of nuke scripts  
     hiero_nuke_script_path: 
       definition: 'episodes/{Scene}/{Shot}/Comp/work/{name}.comp.v{version}.nk'

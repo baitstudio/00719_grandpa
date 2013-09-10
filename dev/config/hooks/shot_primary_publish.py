@@ -135,6 +135,7 @@ class PrimaryPublishHook(Hook):
         self.parent.log_debug("Saving the scene...")
         cmds.file(save=True, force=True)
         
+        
         # copy the file:
         progress_cb(50.0, "Copying the file")
         try:
@@ -147,7 +148,7 @@ class PrimaryPublishHook(Hook):
 
         # work out publish name:
         publish_name = self._get_publish_name(publish_path, publish_template, fields)
-
+        
         # finally, register the publish:
         progress_cb(75.0, "Registering the publish")
         self._register_publish(publish_path, 

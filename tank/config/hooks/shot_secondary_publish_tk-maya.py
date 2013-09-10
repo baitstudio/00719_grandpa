@@ -371,7 +371,7 @@ class PublishHook(Hook):
         # with the publish template:
         publish_path = publish_template.apply_fields(fields)
         
-        
+      
         #export with assets attribute
         attrstring='-a asset -a sim -a abcStep'
         
@@ -382,32 +382,25 @@ class PublishHook(Hook):
         sampling=1.0
         
         nodesString=''
+        rootSet=set([])
         
+        #The extras logic should eventually be removed. It's kept only for backwards compatibility---
         if group_name != 'extras':     
             # node loop   
             for node in item["other_params"]:
-                nodesString+='-root '+node+' '
+                root = node.root()
+                rootSet.add(root)      
+            for root in rootSet:       
+                nodesString+='-root '+root+' '                                  
         elif group_name == 'extras':                  
             for node in item["other_params"]:
-                #if node.hasAttr('abcStep'):
-                print node
                 nodesString+='-root '+node+' '
-                #stepsize= node.abcStep.get()
-                #fields["Asset"] = node.stripNamespace() 
                 fields["Asset"] = 'extras'  
                 publish_path = publish_template.apply_fields(fields) 
                 sampling = node.abcStep.get()
         
         print ('exporting: ' + nodesString)            
-        '''
-        try:
-            print 'exporting subframed ABC'
-            pm.AbcExport(j='-step %s -frameRange %s %s %s -stripNamespaces -uvWrite -worldSpace -writeVisibility %s-file %s' % (sampling,frame_start,frame_end,attrstring,subframeNodes,subPath))
-        except Exception, e:
-            raise TankError("Failed to export Alembic Cache: %s" % e)
-        '''
-        #abc_export_cmd = "AbcExport -j \"-frameRange %s %s %s -stripNamespaces -uvWrite -worldSpace -wholeFrameGeo -writeVisibility %s-file %s\"" % (frame_start,frame_end,attrstring,nodesString,publish_path)
-       
+        
         try:
             #self.parent.log_debug("Executing command: %s" % abc_export_cmd)
             #mel.eval(abc_export_cmd)
@@ -416,8 +409,7 @@ class PublishHook(Hook):
         except Exception, e:
             raise TankError("Failed to export Alembic Cache: %s" % e)
         
-
-
+        
         # Finally, register this publish with Shotgun
         self._register_publish(publish_path, 
                                group_name, 
@@ -427,7 +419,7 @@ class PublishHook(Hook):
                                comment,
                                thumbnail_path,
                                [primary_publish_path])
-
+        
 
     def _publish_playblast_for_item(self, item, output, work_template, primary_publish_path, sg_task, comment, thumbnail_path, progress_cb):
         """
