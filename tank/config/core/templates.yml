@@ -201,11 +201,11 @@ paths:
           
     # The location of Arnold Scene Source files
     maya_ass_export:
-      definition: /{Episode}/cg/{Shot}/v{version}/ass/{name}.[{filetag}.]v{version}.{SEQ}.ass
+      definition: /{Episode}/cg/{Shot}/v{version}/data/{name}.[{filetag}.]v{version}.{SEQ}.ass
       root_name: renders
      
     maya_ass_export_area:
-      definition: /{Episode}/cg/{Shot}/v{version}/ass
+      definition: /{Episode}/cg/{Shot}/v{version}/data
       root_name: renders
   
     # The location of maya reviews
@@ -279,7 +279,7 @@ paths:
     
     # The location of low resolution plates  
     quicktime_proxy_plate_path:
-      definition: 'footage/episodes/{Episode}/{Shot}/proxy_plates/HALF_RES_MOV/{Shot}.[v{version}].mov'
+      definition: 'footage/episodes/{Episode}/{Shot}/proxy_plates/HALF_RES_MOV/{Shot}[.v{version}].mov'
       root_name: resources
     
     # The location of nuke scripts  

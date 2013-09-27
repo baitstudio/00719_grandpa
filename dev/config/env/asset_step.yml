@@ -116,7 +116,7 @@ engines:
         template_publish_area: asset_publish_area
         template_work: maya_asset_work
         template_work_area: asset_work_area
-    debug_logging: false
+    debug_logging: true
     location: {name: tk-maya, type: app_store, version: v0.3.6}
     menu_favourites:
     - {app_instance: tk-multi-workfiles, name: Shotgun File Manager...}

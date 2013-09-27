@@ -118,21 +118,11 @@ class PublishHook(Hook):
                    
             elif output["name"] == "deadline":
                 
-                publishCheck=False
-                
                 try:
-                    self._export_ass()
-                        
-                    publishCheck=True
+                    self._publish_render(item, output, work_template, primary_publish_path, 
+                                         sg_task, comment, thumbnail_path, progress_cb)
                 except Exception, e:
-                       errors.append("Export Ass Failed - %s" % e)
-                
-                if publishCheck:
-                    try:
-                       self._publish_render(item, output, work_template, primary_publish_path, 
-                                            sg_task, comment, thumbnail_path, progress_cb)
-                    except Exception, e:
-                       errors.append("Publish failed - %s" % e)
+                    errors.append("Publish failed - %s" % e)
             else:
                 # don't know how to publish this output types!
                 errors.append("Don't know how to publish this item!") 
@@ -157,44 +147,8 @@ class PublishHook(Hook):
             
         sg.update("Task",taskId,data)
         
+        #return
         return results
-    
-    def _export_ass(self):
-        
-        import mtoa.cmds.arnoldRender as ar
-        
-        filePath=cmds.file(q=True,sn=True)
-        
-        #getting frame range
-        endFrame=cmds.getAttr('defaultRenderGlobals.endFrame')
-        startFrame=cmds.getAttr('defaultRenderGlobals.startFrame')
-        
-        #getting fields for version
-        shot_temp=self.parent.sgtk.templates["maya_shot_work"]
-        shotgunFields=shot_temp.get_fields(filePath)
-        
-        #getting output path
-        area_temp=self.parent.sgtk.templates['maya_ass_export_area']
-        path=area_temp.apply_fields(shotgunFields).replace('\\','/')
-        
-        #setting ass export path
-        cmds.workspace(fileRule = ['ASS', path])
-        
-        #account for renderlayers
-        for layer in cmds.ls(type='renderLayer'):
-            
-            #discarding referenced layers
-            if ':' not in layer:
-                
-                #checking whether layer needs to be rendered
-                if cmds.getAttr(layer+'.renderable')==1:
-                    
-                    cmds.editRenderLayerGlobals( currentRenderLayer=layer )
-                    
-                    try:
-                        ar.arnoldBatchRender('')
-                    except Exception, e:
-                        raise TankError("Failed to export Ass files: %s" % e)
     
     def _publish_render(self, item, output, work_template, primary_publish_path, sg_task, comment, thumbnail_path, progress_cb):
         
@@ -219,6 +173,10 @@ class PublishHook(Hook):
         area_temp=self.parent.sgtk.templates['maya_ass_export']
         inputFilepath=area_temp.apply_fields(shotgunFields).replace('\\','/')
         
+        #getting ass file path
+        area_temp=self.parent.sgtk.templates['maya_shot_publish']
+        mayaFile=area_temp.apply_fields(shotgunFields).replace('\\','/')
+        
         #hardcoded replace of sequence string---
         inputFilepath=inputFilepath.replace('%05d',str(start).zfill(5))
         
@@ -236,7 +194,7 @@ class PublishHook(Hook):
                         layer='masterLayer'
                     
                     #hardcoded replace of name string---
-                    p=inputFilepath.replace('/ass/','/ass/%s/' % layer)
+                    p=inputFilepath.replace('/data/','/data/%s/' % layer)
                     
                     inputFiles.append(p)
         
@@ -257,8 +215,6 @@ class PublishHook(Hook):
             
             #discarding referenced layers
             if ':' not in layer:
-                
-                print 'submitting render for %s' % layer
             
                 #checking whether layer needs to be rendered
                 if cmds.getAttr(layer+'.renderable')==1:
@@ -301,8 +257,13 @@ class PublishHook(Hook):
             
             if not os.path.exists(dirpath):
                 os.makedirs(dirpath)
-                
+        
         #submit to deadline
+        jobname='.'.join(os.path.basename(mayaFile).split('.')[0:-2])
+        exportId=cdu.submit('arnoldExport', jobname, start, end, mayaFile, outputPath,[outputFiles[0]],
+                            ['ProjectPath=%s' % outputPath], submitArgs,
+                            shotgunContext='', shotgunFields='',shotgunUser='',mayaGUI=True)
+        
         for f in inputFiles:
             
             count=inputFiles.index(f)
@@ -315,7 +276,9 @@ class PublishHook(Hook):
             
             #execute deadline submittal
             try:
-                cdu.submit('arnold', jobname, start, end, f, outputPath,[outputFiles[count]], pluginArgs, submitArgs,
+            
+                cdu.submit('arnold', jobname, start, end, f, outputPath,[outputFiles[count]], pluginArgs,
+                           submitArgs=['JobDependencies=%s' % exportId],
                            shotgunContext=shotgunContext, shotgunFields=shotgunFields,shotgunUser=shotgunUser,mayaGUI=True)
             except Exception, e:
                 raise TankError("Failed to submit arnold to deadline: %s" % e)

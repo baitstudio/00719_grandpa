@@ -50,15 +50,6 @@ class ScanScene(Hook):
             
             refs.append( {"node": file_node, "type": "file", "path": path})
         
-               #  collect all the Alembic Nodes
-        for cache in pm.ls(type='AlembicNode'):
-            node_name = cache.longName()
-            
-            # get the path and make it platform dependent
-            # (maya uses C:/style/paths)
-            abc_path = cache.abc_File.get().replace("/", os.path.sep)
-            
-            refs.append( {"node": node_name, "type": "AlembicNode", "path": abc_path}) 
         
                  
         return refs
