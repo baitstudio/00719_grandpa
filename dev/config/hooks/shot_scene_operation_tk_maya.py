@@ -315,16 +315,15 @@ class SceneOperation(Hook):
                     IP = pm.PyNode(mu.imagePlane(cam, moviePath, fileType='movie'))
                 else:  
                     IP = pm.PyNode(mu.imagePlane(cam, imagePath))
+                #mu.imagePlane(cam, imagePath)
+                IP.depth.set(1500)
+                IP.fit.set(0)
+                IP.width.set(960)
+                IP.height.set(540)
+                IP.sizeY.set(0.797)
+                IP.sizeX.set(1.417)
             except:
                 pass
-            
-            #mu.imagePlane(cam, imagePath)
-            IP.depth.set(2000)
-            IP.fit.set(0)
-            IP.width.set(960)
-            IP.height.set(540)
-            IP.sizeY.set(0.797)
-            IP.sizeX.set(1.417)
 
         else:
             cmds.warning('Could not find any cameras to reference!')
@@ -443,7 +442,7 @@ class SceneOperation(Hook):
                     try: 
                         IP = pm.PyNode(mu.imagePlane(cam, imagePath))
                         #mu.imagePlane(cam, imagePath)
-                        IP.depth.set(2000)
+                        IP.depth.set(1500)
                         IP.fit.set(0)
                         IP.width.set(960)
                         IP.height.set(540)
@@ -604,9 +603,12 @@ class SceneOperation(Hook):
                     mesh = node.getShape()
                 except:
                     pass    
-            if  node.nodeType() == 'transform' and node.hasAttr('asset') :            
-                mesh.primaryVisibility.set(1)
-                mesh.aiTraceSets.set('cast')  
+            if  node.nodeType() == 'transform' and node.hasAttr('asset') :
+                try:            
+                    mesh.primaryVisibility.set(1)
+                    mesh.aiTraceSets.set('cast')  
+                except:
+                    pass
             elif node.nodeType() == 'transform' and mesh!=None:
                 if mesh.nodeType() == 'mesh':
                     mesh.primaryVisibility.set(1)

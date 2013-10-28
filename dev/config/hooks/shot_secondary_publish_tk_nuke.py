@@ -309,7 +309,7 @@ class PublishHook(Hook):
         
         #getting login for user and replacing with user in shotgunContext
         shotgunUser=sgtk.util.get_current_user(self.parent.sgtk)
-        
+          
         #creating the folders for rendering
         for outputfile in outputFiles:
             

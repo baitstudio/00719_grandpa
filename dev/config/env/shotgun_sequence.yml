@@ -12,4 +12,4 @@ engines:
         entity_types: [Sequence, Shot, Asset, Task]
         location: {name: tk-shotgun-launchfolder, type: app_store, version: v0.1.5}
     debug_logging: false
-    location: {name: tk-shotgun, type: app_store, version: v0.3.4}
+    location: {name: tk-shotgun, type: app_store, version: v0.3.5}

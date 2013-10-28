@@ -2,34 +2,30 @@ description: Apps and Engines related to Shot based work.
 engines:
   tk-maya:
     apps:
-      bait-app:
-        display_name: BAIT app
-        hook_setup_new_scene: default
-        location: {name: bait_app, path: 'K:/Tank/00719_grandpa/dev/install/apps/bait_app',
-          type: dev}
       tk-maya-breakdown:
         hook_multi_update: maya_breakdown_update
         hook_scan_scene: maya_breakdown_scan_scene
-        location: {name: tk-maya-breakdown, type: app_store, version: v0.2.11}
+        location: {name: tk-maya-breakdown, type: app_store, version: v0.2.13}
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.10}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
       tk-multi-loader-assets:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: multi_add_file_to_scene
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.13}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.18}
         menu_name: Load Assets...
         publish_filters: []
         sg_entity_types:
           Asset: []
         single_select: true
-        tank_types: [Maya Model, Maya Shaded Model, Maya Rig, Maya Lighting, Maya Scene]
+        tank_types: [Maya Model, Maya Shaded Model, Maya Rig, Maya Lighting, Maya
+            Scene]
         title_name: Add items to your Scene
       tk-multi-loader-shots:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: multi_add_file_to_scene
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.13}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.18}
         menu_name: Load Shot Publishes...
         publish_filters: []
         sg_entity_types:
@@ -48,7 +44,7 @@ engines:
         hook_secondary_pre_publish: shot_secondary_pre_publish_tk-maya
         hook_secondary_publish: shot_secondary_publish_tk-maya
         hook_thumbnail: default
-        location: {name: tk-multi-publish, type: app_store, version: v0.3.11}
+        location: {name: tk-multi-publish, type: app_store, version: v0.3.15}
         primary_description: Publish and version up the current Maya scene
         primary_display_name: Maya Publish
         primary_icon: icons/publish_maya_main.png
@@ -56,23 +52,39 @@ engines:
         primary_scene_item_type: work_file
         primary_tank_type: Maya Scene
         secondary_outputs:
-        - {description: Publish Alembic Cache data for the assets, display_group: Caches,
-          display_name: Alembic Cache, icon: icons/alembic_output.png, name: alembic_cache,
-          publish_template: cache_alembic, required: false, scene_item_type: asset,
-          selected: false, tank_type: Alembic Cache}
+        - {description: Publish Alembic cache., display_group: Assets, display_name: Alembic
+            Geometry, icon: icons/alembic_output.png, name: alembic_asset, publish_template: cache_alembic,
+          required: false, scene_item_type: asset, selected: false, tank_type: Alembic
+            Cache}
+        - {description: Publish Alembic cache., display_group: Cameras, display_name: Alembic
+            Camera, icon: icons/alembic_output.png, name: alembic_camera, publish_template: cache_alembic,
+          required: false, scene_item_type: shotcam, selected: false, tank_type: Alembic
+            Cache}
         - {description: Choose cameras for Playblast, display_group: Review, display_name: Playblast,
           icon: icons/playblast_publish.png, name: review, publish_template: maya_shot_review,
           required: false, scene_item_type: shotcam, selected: false, tank_type: Review
             Quicktime}
-        - {description: Send to farm!, display_group: Render, display_name: Deadline,
-          icon: icons/farm_publish.png, name: deadline, publish_template: maya_shot_review,
-          required: false, scene_item_type: render, selected: false, tank_type: Deadline
+        - {description: Publish Alembic cache., display_group: Geometry, display_name: Alembic
+            Geometry, icon: icons/alembic_output.png, name: alembic_geometry, publish_template: cache_alembic,
+          required: false, scene_item_type: geometry, selected: false, tank_type: Alembic
+            Cache}
+        - {description: Sends Ass export and Arnold render to the farm., display_group: Render,
+          display_name: Arnold Render, icon: icons/arnold.png, name: arnold_render,
+          publish_template: maya_shot_review, required: false, scene_item_type: render,
+          selected: false, tank_type: Arnold Render}
+        - {description: Send Maya render to the farm., display_group: Render, display_name: Maya
+            Render, icon: icons/maya.png, name: maya_render, publish_template: maya_shot_review,
+          required: false, scene_item_type: render, selected: false, tank_type: Maya
             Render}
+        - {description: Exports Ass locally and sends Arnold render to the farm.,
+          display_group: Render, display_name: ASS Render, icon: icons/ass.png, name: ass_render,
+          publish_template: maya_shot_review, required: false, scene_item_type: render,
+          selected: false, tank_type: Arnold Render}
         template_work: maya_shot_work
       tk-multi-recentfiles:
         hook_add_file_to_scene: default
         launch_at_startup: false
-        location: {name: tk-multi-recentfiles, type: app_store, version: v0.2.9}
+        location: {name: tk-multi-recentfiles, type: app_store, version: v0.2.11}
         template_work: maya_shot_work
       tk-multi-screeningroom: '@launch_screeningroom'
       tk-multi-setcontext:
@@ -88,7 +100,7 @@ engines:
         hook_copy_file: default
         hook_scene_operation: default
         hook_thumbnail: default
-        location: {name: tk-multi-snapshot, type: app_store, version: v0.2.7}
+        location: {name: tk-multi-snapshot, type: app_store, version: v0.2.11}
         template_snapshot: maya_shot_snapshot
         template_work: maya_shot_work
       tk-multi-workfiles:
@@ -96,8 +108,9 @@ engines:
         file_extensions: []
         hook_copy_file: default
         hook_scene_operation: shot_scene_operation_tk_maya
+        launch_at_startup: false
         launch_change_work_area_at_startup: false
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.21}
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.30}
         saveas_default_name: scene
         saveas_prefer_version_up: false
         sg_entity_type_filters:
@@ -108,8 +121,8 @@ engines:
         template_publish_area: shot_publish_area
         template_work: maya_shot_work
         template_work_area: shot_work_area
-    debug_logging: true
-    location: {name: tk-maya, type: app_store, version: v0.3.6}
+    debug_logging: false
+    location: {name: tk-maya, type: app_store, version: v0.3.9}
     menu_favourites:
     - {app_instance: tk-multi-workfiles, name: Shotgun File Manager...}
     - {app_instance: tk-multi-snapshot, name: Snapshot...}
@@ -120,12 +133,12 @@ engines:
   tk-nuke:
     apps:
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.10}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
       tk-multi-loader:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: default
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.13}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.18}
         menu_name: Load...
         publish_filters: []
         sg_entity_types:
@@ -143,7 +156,7 @@ engines:
         hook_secondary_pre_publish: shot_secondary_pre_publish_tk_nuke
         hook_secondary_publish: shot_secondary_publish_tk_nuke
         hook_thumbnail: default
-        location: {name: tk-multi-publish, type: app_store, version: v0.3.11}
+        location: {name: tk-multi-publish, type: app_store, version: v0.3.15}
         primary_description: Publishes and versions up the current Nuke script.
         primary_display_name: Nuke Publish
         primary_icon: icons/publish_nuke_main.png
@@ -161,7 +174,7 @@ engines:
           tank_type: Rendered Image}
         template_work: nuke_shot_work
       tk-multi-reviewsubmission:
-        location: {name: tk-multi-reviewsubmission, type: app_store, version: v0.1.5}
+        location: {name: tk-multi-reviewsubmission, type: app_store, version: v0.1.8}
         movie_height: 540
         movie_path_template: nuke_shot_render_review_mov
         movie_width: 960
@@ -179,7 +192,7 @@ engines:
         hook_copy_file: default
         hook_scene_operation: default
         hook_thumbnail: default
-        location: {name: tk-multi-snapshot, type: app_store, version: v0.2.7}
+        location: {name: tk-multi-snapshot, type: app_store, version: v0.2.11}
         template_snapshot: nuke_shot_snapshot
         template_work: nuke_shot_work
       tk-multi-workfiles:
@@ -187,8 +200,9 @@ engines:
         file_extensions: []
         hook_copy_file: default
         hook_scene_operation: shot_scene_operation_tk_nuke
+        launch_at_startup: false
         launch_change_work_area_at_startup: false
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.21}
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.30}
         saveas_default_name: scene
         saveas_prefer_version_up: false
         sg_entity_type_filters:
@@ -202,7 +216,7 @@ engines:
       tk-nuke-breakdown:
         hook_multi_update: default
         hook_scan_scene: default
-        location: {name: tk-nuke-breakdown, type: app_store, version: v0.2.14}
+        location: {name: tk-nuke-breakdown, type: app_store, version: v0.2.16}
       tk-nuke-quickdailies:
         current_scene_template: nuke_shot_work
         height: 768
@@ -212,7 +226,7 @@ engines:
         sg_version_name_template: nuke_quick_shot_version_name
         width: 1024
       tk-nuke-writenode:
-        location: {name: tk-nuke-writenode, type: app_store, version: v0.1.7}
+        location: {name: tk-nuke-writenode, type: app_store, version: v0.1.8}
         template_script_work: nuke_shot_work
         write_nodes:
         - file_type: exr
@@ -222,7 +236,7 @@ engines:
           settings: {datatype: 16 bit half}
           tank_type: Comp Render
     debug_logging: false
-    location: {name: tk-nuke, type: app_store, version: v0.2.13}
+    location: {name: tk-nuke, type: app_store, version: v0.2.16}
     menu_favourites:
     - {app_instance: tk-multi-workfiles, name: Shotgun File Manager...}
     - {app_instance: tk-multi-snapshot, name: Snapshot...}
@@ -232,12 +246,12 @@ engines:
   tk-photoshop:
     apps:
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.10}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
       tk-multi-loader:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: default
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.13}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.18}
         menu_name: Load Image...
         publish_filters: []
         sg_entity_types:
@@ -249,29 +263,21 @@ engines:
       tk-multi-recentfiles:
         hook_add_file_to_scene: default
         launch_at_startup: false
-        location: {name: tk-multi-recentfiles, type: app_store, version: v0.2.9}
+        location: {name: tk-multi-recentfiles, type: app_store, version: v0.2.11}
         template_work: photoshop_shot_work
       tk-multi-screeningroom: '@launch_screeningroom'
-      tk-photoshop-publish:
-        hook_publish_file: default
-        location: {name: tk-photoshop-publish, type: app_store, version: v0.0.8}
-        published_scene_tank_type: Photoshop Image
-        template_publish_jpg: photoshop_shot_publish_jpg
-        template_publish_psd: photoshop_shot_publish_psd
-        template_snapshot: photoshop_shot_snapshot
-        template_work: photoshop_shot_work
     debug_logging: true
-    location: {name: tk-photoshop, type: app_store, version: v0.1.3}
+    location: {name: tk-photoshop, type: app_store, version: v0.1.5}
   tk-shell:
     apps:
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.10}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
       tk-multi-screeningroom: '@launch_screeningroom'
       tk-shotgun-launchmaya: '@launch_maya'
       tk-shotgun-launchnuke: '@launch_nuke'
       tk-shotgun-launchphotoshop: '@launch_photoshop'
     debug_logging: false
-    location: {name: tk-shell, type: app_store, version: v0.3.3}
+    location: {name: tk-shell, type: app_store, version: v0.3.4}
 frameworks:
   tk-framework-widget_v0.1.1:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.1}
@@ -285,6 +291,12 @@ frameworks:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.15}
   tk-framework-widget_v0.1.16:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.16}
+  tk-framework-widget_v0.1.18:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.18}
+  tk-framework-widget_v0.1.19:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.19}
+  tk-framework-widget_v0.1.20:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.20}
   tk-framework-widget_v0.1.3:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.3}
   tk-framework-widget_v0.1.4:

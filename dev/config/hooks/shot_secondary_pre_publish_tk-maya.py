@@ -76,17 +76,25 @@ class PrePublishHook(Hook):
             item = task["item"]
             output = task["output"]
             errors = []
-        
+            
             # report progress:
             progress_cb(0, "Validating", task)
             
             # pre-publish alembic_cache output
-            if output["name"] == "alembic_cache":
-                errors.extend(self._validate_item_for_alembic_cache_publish(item))
+            if output["name"] == "alembic_asset":
+                print ('Caching asset.')
+            elif output['name'] == "alembic_camera":
+                print ('Caching camera.')
+            elif output['name'] == "alembic_geometry":
+                print ('Caching geometry.')
             elif output['name'] == "review":
                 print ("playblast camera" + str(item))
-            elif output["name"] == "deadline":
-                print 'Farm that shit!'
+            elif output['name'] == "arnold_render":
+                print ("Send Maya and Arnold files to farm")
+            elif output['name'] == "maya_render":
+                print ("Send Maya file to farm")
+            elif output['name'] == "ass_render":
+                print ("Send ASS files to farm")
             else:
                 # don't know how to publish this output types!
                 errors.append("Don't know how to publish this item!")       
@@ -99,23 +107,3 @@ class PrePublishHook(Hook):
             progress_cb(100)
             
         return results
-    
-    def _validate_item_for_alembic_cache_publish(self, item):
-        """
-        Validate that the item is valid to be exported 
-        to an alembic cache
-        """
-        errors = []
-        # check that the group still exists:
-        '''
-        if not cmds.objExists(item["other_params"]):
-            errors.append("This group couldn't be found in the scene!")
-    
-        # and that it still contains meshes:
-        elif not cmds.ls(item["name"], dag=True, type="mesh"):
-            errors.append("This group doesn't appear to contain any meshes!")
-        '''
-        # finally return any errors
-        return errors
-        
-    
