@@ -36,5 +36,8 @@ class PreSubmitHook(Hook):
         
         jobname = '.'.join(os.path.basename(scene_name).split('.')[0:-1])
         items.append({'type':'jobname','value':jobname})
+        
+        #saving scene before dialog
+        cmds.file(save=True, force=True)
 
         return items
