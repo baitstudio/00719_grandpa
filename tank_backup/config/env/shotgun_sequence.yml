@@ -1,0 +1,15 @@
+engines:
+  tk-shotgun:
+    apps:
+      tk-shotgun-folders:
+        deny_permissions: []
+        deny_platforms: []
+        entity_types: [Sequence, Shot, Asset]
+        location: {name: tk-shotgun-folders, type: app_store, version: v0.1.5}
+      tk-shotgun-launchfolder:
+        deny_permissions: []
+        deny_platforms: []
+        entity_types: [Sequence, Shot, Asset, Task]
+        location: {name: tk-shotgun-launchfolder, type: app_store, version: v0.1.5}
+    debug_logging: false
+    location: {name: tk-shotgun, type: app_store, version: v0.3.5}

@@ -7,12 +7,12 @@ engines:
         hook_scan_scene: maya_breakdown_scan_scene
         location: {name: tk-maya-breakdown, type: app_store, version: v0.2.13}
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.15}
       tk-multi-loader-assets:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: multi_add_file_to_scene
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.18}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.21}
         menu_name: Load Assets...
         publish_filters: []
         sg_entity_types:
@@ -25,7 +25,7 @@ engines:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: multi_add_file_to_scene
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.18}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.21}
         menu_name: Load Shot Publishes...
         publish_filters: []
         sg_entity_types:
@@ -86,11 +86,26 @@ engines:
         launch_at_startup: false
         location: {name: tk-multi-recentfiles, type: app_store, version: v0.2.11}
         template_work: maya_shot_work
+      tk-multi-renderfarm:
+        hook_post_submit: shot_post_submit_tk_maya
+        hook_pre_submit: shot_pre_submit_tk_maya
+        location: {path: 'K:/Tank/00719_grandpa/dev/install/apps/tk-multi-renderfarm',
+          type: dev}
+        outputs:
+        - {description: Sends Ass export and Arnold render to the farm., display_group: Render,
+          display_name: Arnold Render, icon: icons/arnold.png, name: arnold_render,
+          required: false, selected: false, tank_type: Arnold Render}
+        - {description: Send Maya render to the farm., display_group: Render, display_name: Maya
+            Render, icon: icons/maya.png, name: maya_render, required: false, selected: false,
+          tank_type: Maya Render}
+        - {description: Exports Ass locally and sends Arnold render to the farm.,
+          display_group: Render, display_name: ASS Render, icon: icons/ass.png, name: ass_render,
+          required: false, selected: false, tank_type: Arnold Render}
       tk-multi-screeningroom: '@launch_screeningroom'
       tk-multi-setcontext:
         enable_create_tasks: true
         launch_at_startup: false
-        location: {name: tk-multi-setcontext, type: app_store, version: v0.2.7}
+        location: {name: tk-multi-setcontext, type: app_store, version: v0.2.9}
         sg_entity_types: [Shot]
       tk-multi-setframerange:
         location: {name: tk-multi-setframerange, type: app_store, version: v0.1.7}
@@ -110,7 +125,7 @@ engines:
         hook_scene_operation: shot_scene_operation_tk_maya
         launch_at_startup: false
         launch_change_work_area_at_startup: false
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.30}
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.35}
         saveas_default_name: scene
         saveas_prefer_version_up: false
         sg_entity_type_filters:
@@ -133,12 +148,12 @@ engines:
   tk-nuke:
     apps:
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.15}
       tk-multi-loader:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: default
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.18}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.21}
         menu_name: Load...
         publish_filters: []
         sg_entity_types:
@@ -173,8 +188,17 @@ engines:
           publish_template: null, required: false, scene_item_type: write_node, selected: false,
           tank_type: Rendered Image}
         template_work: nuke_shot_work
+      tk-multi-renderfarm:
+        hook_post_submit: shot_post_submit_tk_nuke
+        hook_pre_submit: shot_pre_submit_tk_nuke
+        location: {path: 'K:/Tank/00719_grandpa/dev/install/apps/tk-multi-renderfarm',
+          type: dev}
+        outputs:
+        - {description: Sends Nuke render to the farm., display_group: Render, display_name: Nuke
+            Render, icon: icons/nuke.png, name: nuke_render, required: false, selected: false,
+          tank_type: Nuke Render}
       tk-multi-reviewsubmission:
-        location: {name: tk-multi-reviewsubmission, type: app_store, version: v0.1.8}
+        location: {name: tk-multi-reviewsubmission, type: app_store, version: v0.1.9}
         movie_height: 540
         movie_path_template: nuke_shot_render_review_mov
         movie_width: 960
@@ -202,7 +226,7 @@ engines:
         hook_scene_operation: shot_scene_operation_tk_nuke
         launch_at_startup: false
         launch_change_work_area_at_startup: false
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.30}
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.35}
         saveas_default_name: scene
         saveas_prefer_version_up: false
         sg_entity_type_filters:
@@ -226,7 +250,7 @@ engines:
         sg_version_name_template: nuke_quick_shot_version_name
         width: 1024
       tk-nuke-writenode:
-        location: {name: tk-nuke-writenode, type: app_store, version: v0.1.8}
+        location: {name: tk-nuke-writenode, type: app_store, version: v0.1.10}
         template_script_work: nuke_shot_work
         write_nodes:
         - file_type: exr
@@ -246,12 +270,12 @@ engines:
   tk-photoshop:
     apps:
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.15}
       tk-multi-loader:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: default
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.18}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.21}
         menu_name: Load Image...
         publish_filters: []
         sg_entity_types:
@@ -267,11 +291,11 @@ engines:
         template_work: photoshop_shot_work
       tk-multi-screeningroom: '@launch_screeningroom'
     debug_logging: true
-    location: {name: tk-photoshop, type: app_store, version: v0.1.5}
+    location: {name: tk-photoshop, type: app_store, version: v0.1.6}
   tk-shell:
     apps:
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.15}
       tk-multi-screeningroom: '@launch_screeningroom'
       tk-shotgun-launchmaya: '@launch_maya'
       tk-shotgun-launchnuke: '@launch_nuke'
@@ -297,6 +321,10 @@ frameworks:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.19}
   tk-framework-widget_v0.1.20:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.20}
+  tk-framework-widget_v0.1.22:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.22}
+  tk-framework-widget_v0.1.23:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.23}
   tk-framework-widget_v0.1.3:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.3}
   tk-framework-widget_v0.1.4:

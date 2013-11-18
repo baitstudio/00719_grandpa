@@ -147,11 +147,6 @@ paths:
       definition: assets/{sg_asset_type}/{Asset}/publish/{Asset}[.v{version}].abc
       root_name: work
 
-    #example_app
-    maya_shot_example:
-      definition: /{Episode}/{Shot}/{Step}/work/{name}
-      root_name: renders
-
     # project
     shot_work_area:
       definition: episodes/{Episode}/{Shot}/{Step}/work

@@ -7,12 +7,12 @@ engines:
         hook_scan_scene: default
         location: {name: tk-maya-breakdown, type: app_store, version: v0.2.13}
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.15}
       tk-multi-loader-assets:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: multi_add_file_to_scene
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.18}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.21}
         menu_name: Load Assets...
         publish_filters: []
         sg_entity_types:
@@ -92,7 +92,7 @@ engines:
       tk-multi-setcontext:
         enable_create_tasks: true
         launch_at_startup: false
-        location: {name: tk-multi-setcontext, type: app_store, version: v0.2.7}
+        location: {name: tk-multi-setcontext, type: app_store, version: v0.2.9}
         sg_entity_types: [Asset]
       tk-multi-snapshot:
         hook_copy_file: default
@@ -108,7 +108,7 @@ engines:
         hook_scene_operation: asset_scene_operation_tk_maya
         launch_at_startup: false
         launch_change_work_area_at_startup: false
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.30}
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.35}
         saveas_default_name: scene
         saveas_prefer_version_up: false
         sg_entity_type_filters: {}
@@ -129,12 +129,12 @@ engines:
   tk-nuke:
     apps:
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.15}
       tk-multi-loader:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: default
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.18}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.21}
         menu_name: Load Render...
         publish_filters: []
         sg_entity_types:
@@ -180,7 +180,7 @@ engines:
         hook_scene_operation: default
         launch_at_startup: false
         launch_change_work_area_at_startup: false
-        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.30}
+        location: {name: tk-multi-workfiles, type: app_store, version: v0.3.35}
         saveas_default_name: scene
         saveas_prefer_version_up: false
         sg_entity_type_filters: {}
@@ -202,7 +202,7 @@ engines:
         sg_version_name_template: nuke_quick_asset_version_name
         width: 1024
       tk-nuke-writenode:
-        location: {name: tk-nuke-writenode, type: app_store, version: v0.1.8}
+        location: {name: tk-nuke-writenode, type: app_store, version: v0.1.10}
         template_script_work: nuke_asset_work
         write_nodes:
         - file_type: exr
@@ -222,12 +222,12 @@ engines:
   tk-photoshop:
     apps:
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.15}
       tk-multi-loader:
         button_name: Load Selected Item
         dependency_mode: false
         hook_add_file_to_scene: default
-        location: {name: tk-multi-loader, type: app_store, version: v0.2.18}
+        location: {name: tk-multi-loader, type: app_store, version: v0.2.21}
         menu_name: Load Image...
         publish_filters: []
         sg_entity_types:
@@ -243,11 +243,11 @@ engines:
         template_work: photoshop_asset_work
       tk-multi-screeningroom: '@launch_screeningroom'
     debug_logging: true
-    location: {name: tk-photoshop, type: app_store, version: v0.1.5}
+    location: {name: tk-photoshop, type: app_store, version: v0.1.6}
   tk-shell:
     apps:
       tk-multi-about:
-        location: {name: tk-multi-about, type: app_store, version: v0.1.14}
+        location: {name: tk-multi-about, type: app_store, version: v0.1.15}
       tk-multi-screeningroom: '@launch_screeningroom'
       tk-shotgun-launchmaya: '@launch_maya'
       tk-shotgun-launchnuke: '@launch_nuke'
@@ -273,6 +273,10 @@ frameworks:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.19}
   tk-framework-widget_v0.1.20:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.20}
+  tk-framework-widget_v0.1.22:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.22}
+  tk-framework-widget_v0.1.23:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.23}
   tk-framework-widget_v0.1.3:
     location: {name: tk-framework-widget, type: app_store, version: v0.1.3}
   tk-framework-widget_v0.1.4:

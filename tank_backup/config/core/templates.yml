@@ -1,0 +1,398 @@
+#
+# Copyright (c) 2012 Shotgun Software, Inc
+# ----------------------------------------------------
+
+#
+# This file is one of the central points in the Tank configuration and a counterpart to
+# the folder configuration structure.
+#
+# the folder structure underneath the project folder is used to create folders on disk - 
+# templates.yml (this file) refers to those folders. Therefore, the two files need to be 
+# in sync. This file contains an overview of all locations that are used in Tank.
+#
+# Whenever an app or an engine refers to a location on disk, it is using a entry defined in 
+# this file. For more information, see the Tank Documentation. 
+
+
+
+#
+# The keys section contains the definitions for all the different keys that are being
+# used in Tank. A key is a magic token that is replaced by a value at runtime, for example
+# {Shot}. The section below tells Tank which data types and formats to expect for each key.
+#
+keys:
+    Sequence:
+        type: str
+    Shot:
+        type: str
+    Step:
+        type: str
+        shotgun_entity_type: Step
+        shotgun_field_name: short_name
+    sg_asset_type:
+        type: str
+    Asset:
+        type: str
+    name:
+        type: str
+        #filter_by: alphanumeric
+    iteration:
+        type: int
+    version:
+        type: int
+        format_spec: "03"
+    version_four:
+       type: int
+       format_spec: "04"
+       alias: version
+    timestamp:
+        type: str
+    width:
+        type: int
+    height:
+        type: int
+    channel:
+        type: str
+        filter_by: alphanumeric
+    filetag:
+        type: str
+        shotgun_entity_type: Task
+        shotgun_field_name: sg_filetag   
+    SEQ:
+        type: sequence
+        format_spec: "05"
+    eye:
+        type: str
+    Episode:
+        type: str
+        shotgun_entity_type: Shot
+        shotgun_field_name: sg_scene
+    Scene:
+        type: str
+        shotgun_entity_type: Scene
+        shotgun_field_name: code
+    grp_name:
+        type: str
+        
+    # these are used by the hiero exporter and pipeline
+    YYYY:
+        type: int
+        format_spec: "04"
+    MM:
+        type: int
+        format_spec: "02"
+    DD:
+        type: int
+        format_spec: "02"
+        alias: DD
+    project:
+        type: str        
+
+#
+# The paths section contains all the the key locations where files are to be stored
+# by Tank Apps. Each path is made up of several keys (like {version} or {shot}) and
+# these are defined in the keys section above.
+#
+# Tank apps use these paths as part of their configuration to define where on disk
+# different files should go.
+#
+
+paths:
+
+    ##########################################################################################
+    # Episode level paths 
+    #
+
+    #
+    # Hiero
+    #
+
+    # The location of WIP files
+    hiero_project_work:
+      definition: footage/episodes/{Scene}/ingest/{name}.v{version}.hrox
+      root_name: resources
+      
+    hiero_project_work_area:
+      definition: footage/episodes/{Scene}/ingest
+      root_name: resources
+      
+    # The location of backups of WIP files
+    hiero_project_snapshot:
+      definition: footage/episodes/{Scene}/ingest/snapshots/{name}.v{version}.{timestamp}.hrox'
+      root_name: resources
+
+    # The location of published hiero files
+    hiero_project_publish:
+      definition: footage/episodes/{Scene}/ingest/publish/{name}.v{version}.hrox
+      root_name: resources
+    hiero_project_publish_area:
+      definition: footage/episodes/{Scene}/ingest/publish/
+      root_name: resources
+
+
+    ##########################################################################################
+    # Shot pipeline 
+    #
+
+    #
+    # General
+    #
+
+    # The location of alembic cache
+    cache_alembic:
+      definition: /{Episode}/cache/{Shot}/{Step}/[{Asset}][.{filetag}].v{version}.abc
+      root_name: renders
+      
+    cache_alembic_asset:
+      definition: assets/{sg_asset_type}/{Asset}/publish/{Asset}[.v{version}].abc
+      root_name: work
+
+    #example_app
+    maya_shot_example:
+      definition: /{Episode}/{Shot}/{Step}/work/{name}
+      root_name: renders
+
+    # project
+    shot_work_area:
+      definition: episodes/{Episode}/{Shot}/{Step}/work
+      root_name: work
+
+    # define the location of a publish area
+    shot_publish_area:
+      definition: 'episodes/{Episode}/{Shot}/{Step}/publish'
+      root_name: work
+      
+    light_setup_temp:
+      definition: episodes/{Episode}/{Shot}/{Step}/work/SHOTGUN_SAVE_AS_PLEASE.ma
+      root_name: work
+    
+    #
+    # Maya
+    #
+
+    # The location of ncache
+    maya_nCache:
+      definition: /{Episode}/cache/{Shot}/nCache
+      root_name: renders
+
+    # The location of WIP files
+    maya_shot_work:
+      definition: episodes/{Episode}/{Shot}/{Step}/work/{name}.[{filetag}.]v{version}.ma
+      root_name: work
+
+    # The location of backups of WIP files
+    maya_shot_snapshot:
+      definition: episodes/{Episode}/{Shot}/{Step}/work/snapshots/{name}.[{filetag}.]v{version}.{timestamp}.ma
+      root_name: work
+
+    # The location of published maya files
+    maya_shot_publish:
+      definition: episodes/{Episode}/{Shot}/{Step}/publish/{name}.[{filetag}.]v{version}.ma
+      root_name: work
+
+    # The location of maya renders
+    maya_shot_render:
+      definition: /{Episode}/cg/{Shot}/v{version}/{name}.v{version}.{SEQ}.exr
+      root_name: renders
+
+    maya_shot_render_area:
+      definition: /{Episode}/cg/{Shot}/v{version}
+      root_name: renders
+          
+    # The location of Arnold Scene Source files
+    maya_ass_export:
+      definition: /{Episode}/cg/{Shot}/v{version}/data/{name}.[{filetag}.]v{version}.{SEQ}.ass
+      root_name: renders
+     
+    maya_ass_export_area:
+      definition: /{Episode}/cg/{Shot}/v{version}/data
+      root_name: renders
+  
+    # The location of maya reviews
+    maya_shot_review:
+      definition: /{Episode}/review/{Shot}/{name}.[{filetag}.]v{version}.mov
+      root_name: renders
+
+    #
+    # Nuke 
+    #
+
+    # The location of WIP script files
+    nuke_shot_work:
+      definition: episodes/{Episode}/{Shot}/{Step}/work/{name}.[{filetag}.]v{version}.nk
+      root_name: work
+
+    # The location of backups of WIP files
+    nuke_shot_snapshot:
+      definition: episodes/{Episode}/{Shot}/{Step}/work/snapshots/{name}.[{filetag}.]v{version}.{timestamp}.nk
+      root_name: work
+
+    # The location of published nuke script files
+    nuke_shot_publish:
+      definition: episodes/{Episode}/{Shot}/{Step}/publish/{name}.[{filetag}.]v{version}.nk
+      root_name: work
+
+    # write node outputs
+    nuke_shot_render_exr:
+      definition: /{Episode}/comp/{Shot}/v{version}/{name}.v{version}.{SEQ}.exr
+      root_name: renders
+    nuke_shot_render_review_mov:
+      definition: /{Episode}/review/{Shot}/{name}.v{version}.mov
+      root_name: renders
+    nuke_shot_render_exr_review_seq:
+      definition: /{Episode}/comp/{Shot}/v{version}/{name}.v{version}.{iteration}.{SEQ}.exr
+      root_name: renders
+    nuke_shot_render_pub_exr:
+      definition: /{Episode}/comp/{Shot}/elements/v{version}/{name}.v{version}.{SEQ}.exr
+      root_name: renders
+      
+    nuke_shot_render_area:
+      definition: /{Episode}/comp/{Shot}/v{version}
+      root_name: renders
+
+    # review output
+    shot_quicktime_quick:
+      definition: /{Episode}/review/{Shot}/{Shot}_{name}_quick_{iteration}.mov
+      root_name: renders
+
+    #
+    # Hiero
+    #
+
+    # export of shot asset data from hiero
+
+ 
+    # The location of high resolution plates
+    high_res_plate_path:
+      definition: 'footage/episodes/{Episode}/{Shot}/plates/{Shot}.[v{version}.]{SEQ}.exr'
+      root_name: resources
+      
+    # The location of full resolution plates  
+    full_res_proxy_plate_path:
+      definition: 'footage/episodes/{Episode}/{Shot}/proxy_plates/FULL_RES/{Shot}.[v{version}.]{SEQ}.jpg'
+      root_name: resources
+      
+    # The location of low resolution plates  
+    low_res_proxy_plate_path:
+      definition: 'footage/episodes/{Episode}/{Shot}/proxy_plates/HALF_RES/{Shot}.[v{version}.]{SEQ}.jpg'
+      root_name: resources
+    
+    # The location of low resolution plates  
+    quicktime_proxy_plate_path:
+      definition: 'footage/episodes/{Episode}/{Shot}/proxy_plates/HALF_RES_MOV/{Shot}[.v{version}].mov'
+      root_name: resources
+    
+    # The location of nuke scripts  
+    hiero_nuke_script_path: 
+      definition: 'episodes/{Scene}/{Shot}/Comp/work/{name}.comp.v{version}.nk'
+      root_name: resources
+      
+    # The location final delivery renders 
+    hiero_render_path:
+      definition: 'episodes/{Scene}/v{version}/{project}_{Shot}.v{version}.mov'
+      root_name: delivery
+
+    ##########################################################################################
+    # Asset pipeline 
+
+    # project
+    asset_work_area:
+      definition: assets/{sg_asset_type}/{Asset}/work/{Step}
+      root_name: work
+
+    # define the location of a publish area
+    asset_publish_area:
+      definition: assets/{sg_asset_type}/{Asset}/publish
+      root_name: work
+      
+    # define the location of a review area
+    asset_review_movie:
+      definition: assets/{sg_asset_type}/{Asset}/review/{name}.v{version}.mov
+      root_name: work
+
+    #
+    # Maya
+    #
+
+    # The location of WIP files
+    maya_asset_work:
+      definition: assets/{sg_asset_type}/{Asset}/work/{Step}/{name}.[{filetag}.]v{version}.ma
+      root_name: work
+
+    # The location of backups of WIP files
+    maya_asset_snapshot:
+      definition: assets/{sg_asset_type}/{Asset}/work/{Step}/snapshots/{name}.[{filetag}.]v{version}.{timestamp}.ma
+      root_name: work
+
+    # The location of published maya files
+    maya_asset_publish:
+      definition: assets/{sg_asset_type}/{Asset}/publish/{name}.[{filetag}.]v{version}.ma
+      root_name: work
+
+    # The location of published textures
+    maya_publish_texture:
+      definition: assets/{sg_asset_type}/{Asset}/publish/maps/{name}.map.v{version}
+      root_name: work
+
+     # The location of maya reviews
+    maya_asset_review:
+      definition: assets/{sg_asset_type}/{Asset}/review/{name}.mov
+      root_name: work
+
+    #
+    # Nuke
+    #
+
+    # outputs from the tank write node for assets
+    nuke_asset_render:
+      definition: assets/{sg_asset_type}/{Asset}/{Step}/work/images/{name}/v{version}/{width}x{height}/{Asset}_{name}_{channel}_v{version}.{SEQ}.exr
+      root_name: work
+    nuke_asset_render_review_mov:
+      definition: assets/{sg_asset_type}/{Asset}/{Step}/review/images/{name}/v{version}/{width}x{height}/{Asset}_{name}_{channel}_v{version}.{iteration}.mov
+      root_name: work
+    nuke_asset_render_review_seq:
+      definition: assets/{sg_asset_type}/{Asset}/{Step}/review/images/{name}/v{version}/{width}x{height}/{Asset}_{name}_{channel}_v{version}.{iteration}.{SEQ}.exr
+      root_name: work
+    nuke_asset_render_pub:
+      definition: assets/{sg_asset_type}/{Asset}/{Step}/publish/elements/{name}/v{version}/{width}x{height}/{Asset}_{name}_{channel}_v{version}.{SEQ}.exr
+      root_name: work
+
+    # review output
+    asset_quicktime_quick:
+      definition: assets/{sg_asset_type}/{Asset}/{Step}/review/quickdaily/{Asset}_{name}_quick_{iteration}.mov
+      root_name: work
+
+    # The location of WIP script files
+    nuke_asset_work:
+      definition: assets/{sg_asset_type}/{Asset}/{Step}/work/nuke/{name}.v{version}.nk
+      root_name: work
+
+    # The location of backups of WIP files
+    nuke_asset_snapshot:
+      definition: assets/{sg_asset_type}/{Asset}/{Step}/work/nuke/snapshots/{name}.v{version}.{timestamp}.nk
+      root_name: work
+
+    # The location of published nuke script files
+    nuke_asset_publish:
+      definition: assets/{sg_asset_type}/{Asset}/{Step}/publish/nuke/{name}.v{version}.nk
+      root_name: work
+
+
+
+
+#
+# The strings section is similar to the paths section - but rather than defining paths
+# on disk, it contains a list of strings. Strings are typically used when you want to be 
+# able to configure the way data is written to shotgun - it may be the name field for a
+# review version or the formatting of a publish.
+#
+
+strings:
+
+    # when a review version in shotgun is created inside of nuke, this is the 
+    # name that is being given to it (the code field)
+    nuke_shot_version_name: "{Shot}_{name}_{channel}_v{version}.{iteration}"
+    nuke_quick_shot_version_name: "{Shot}_{name}_quick_{iteration}"
+
+    nuke_asset_version_name: "{Asset}_{name}_{channel}_v{version}.{iteration}"
+    nuke_quick_asset_version_name: "{Asset}_{name}_quick_{iteration}"

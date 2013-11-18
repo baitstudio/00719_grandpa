@@ -9,7 +9,7 @@
 #
 # maya
 #
-maya_windows: '"K:\Maya_Grandpa.bat"'
+maya_windows: 'K:\baitMaya.exe'
 maya_mac: /Applications/Autodesk/maya2014/Maya.app
 maya_linux: maya
 

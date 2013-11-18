@@ -33,6 +33,7 @@
                 <Item>\config\core\install_location.yml</Item>
                 <Item>\config\core\pipeline_configuration.yml</Item>
                 <Item>\config\core\roots.yml</Item>
+                <Item>*.pyc</Item>
             </Exclude>
             <TimeSpan Type="Inactive">0</TimeSpan>
             <SizeMin Unit="Inactive">0</SizeMin>
