@@ -32,7 +32,7 @@ class PreSubmitHook(Hook):
         #scan scene for starting information
         items.append({'type':'start','value':cmds.getAttr('defaultRenderGlobals.startFrame')})
         items.append({'type':'end','value':cmds.getAttr('defaultRenderGlobals.endFrame')})
-        items.append({'type':'limit','value':'shave_render'})
+        items.append({'type':'limit','value':''})
         
         jobname = '.'.join(os.path.basename(scene_name).split('.')[0:-1])
         items.append({'type':'jobname','value':jobname})
